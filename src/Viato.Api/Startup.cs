@@ -8,8 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 using Viato.Api.Auth;
 using Viato.Api.Entities;
+using Viato.Api.Notification;
 using Viato.Api.Stores;
 
 namespace Viato.Api
@@ -37,6 +39,7 @@ namespace Viato.Api
             services.AddHttpClient();
             services.AddAuthServices();
             services.AddStores();
+            services.AddSendGridEmailSender(Configuration);
 
             services.AddIdentity<AppUser, AppRole>()
                 .AddEntityFrameworkStores<ViatoContext>()
@@ -79,6 +82,16 @@ namespace Viato.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Viato API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
             });
         }
 
