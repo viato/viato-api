@@ -28,7 +28,7 @@ namespace Viato.Api
                 {
                     ClientId = "viato-web-ui",
                     ClientName = "Viato Web Ui Client",
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    AllowedGrantTypes = new[] { "password", "external" },
                     RequireClientSecret = false,
                     AllowedScopes =
                     {
@@ -36,7 +36,12 @@ namespace Viato.Api
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "api"
-                    }
+                    },
+                    AccessTokenType = AccessTokenType.Jwt,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    AllowOfflineAccess = true,
+                    AlwaysSendClientClaims = true,
+                    Enabled = true,
                 }
             };
     }

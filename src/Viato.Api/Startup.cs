@@ -8,7 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Viato.Api.Auth;
 using Viato.Api.Entities;
+using Viato.Api.Stores;
 
 namespace Viato.Api
 {
@@ -32,6 +34,10 @@ namespace Viato.Api
             {
                 options.UseNpgsql(appSettings.PostgresConnectionString);
             });
+
+            services.AddHttpClient();
+            services.AddAuthServices();
+            services.AddStores();
 
             services.AddIdentity<AppUser, AppRole>()
                 .AddEntityFrameworkStores<ViatoContext>()
@@ -59,21 +65,6 @@ namespace Viato.Api
                     options.RequireHttpsMetadata = false;
                     options.Audience = "api";
                 });
-            //.AddGoogle(googleOptions =>
-            //{
-            //    googleOptions.ClientId = appSettings.GoogleClientId;
-            //    googleOptions.ClientSecret = appSettings.GoogleClientSecret;
-            //})
-            //.AddTwitter(twitterOptions =>
-            //{
-            //    twitterOptions.ConsumerKey = appSettings.TwitterConsumerKey;
-            //    twitterOptions.ConsumerSecret = appSettings.TwitterConsumerSecret;
-            //})
-            //.AddFacebook(facebookOptions =>
-            //{
-            //    facebookOptions.AppId = appSettings.FacebookAppId;
-            //    facebookOptions.AppSecret = appSettings.FacebookAppSecret;
-            //});
 
             services.AddAuthorization(authorizationOptions =>
             {
