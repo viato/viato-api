@@ -28,7 +28,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterUserModel model)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -80,7 +80,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordModel model)
+        public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -107,7 +107,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPasswordAsync(ForgotPasswordModel model)
+        public async Task<IActionResult> ForgotPasswordAsync([FromBody]ForgotPasswordModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -130,7 +130,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmailAsync(ConfirmEmailModel model)
+        public async Task<IActionResult> ConfirmEmailAsync([FromBody]ConfirmEmailModel model)
         {
             if (!ModelState.IsValid)
             {
