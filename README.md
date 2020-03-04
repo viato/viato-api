@@ -11,3 +11,6 @@
 After adding/modifying any database entity please run following command from PM Console:
 - add-migration [your_migration_name]
 - update-database
+
+### Local-Testing
+You can find postman collection at: `/tools/Viato.postman_collection.json`
