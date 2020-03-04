@@ -64,7 +64,7 @@ namespace Viato.Api.Auth
             }
 
             var role = (AppUserRole)Enum.Parse(typeof(AppUserRole), roleString, ignoreCase: true);
-            if (!Enum.IsDefined(typeof(ExternalProviderType), role))
+            if (!Enum.IsDefined(typeof(AppUserRole), role))
             {
                 context.Result = new GrantValidationResult(TokenRequestErrors.InvalidRequest, "invalid role");
                 return;

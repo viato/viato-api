@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -18,10 +19,12 @@ namespace Viato.Api.Controllers
     public class AuthController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public AuthController(UserManager<AppUser> userManager)
+        public AuthController(UserManager<AppUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
         }
 
         [HttpPost("register")]
@@ -54,6 +57,12 @@ namespace Viato.Api.Controllers
                     ModelState.AddModelError("", error.Description);
                     return BadRequest(ModelState);
                 }
+            }
+
+            var addRoleClaimResult = await _userManager.AddClaimAsync(user, new Claim("role", model.Role.ToString()));
+            if (!addRoleClaimResult.Succeeded)
+            {
+                // TOOD add warning log.
             }
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
