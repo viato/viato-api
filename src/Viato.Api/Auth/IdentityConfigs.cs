@@ -34,6 +34,7 @@ namespace Viato.Api.Auth
                     {
                         "api"
                     },
+                    AllowedCorsOrigins = { "http://localhost:4200" },
                     AccessTokenType = AccessTokenType.Jwt,
                     AlwaysIncludeUserClaimsInIdToken = true,
                     AllowOfflineAccess = true,
