@@ -15,29 +15,13 @@ namespace Viato.Api.Controllers
     public class AuthController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly IIdentityServerInteractionService _interaction;
-        private readonly IClientStore _clientStore;
-        private readonly IEventService _events;
-        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(
-            UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager,
-            IIdentityServerInteractionService interaction,
-            IClientStore clientStore,
-            IEventService events,
-            ILogger<AuthController> logger)
+        public AuthController(UserManager<AppUser> userManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
-            _interaction = interaction;
-            _clientStore = clientStore;
-            _events = events;
-            _logger = logger;
         }
 
-        [HttpPost("internal-register")]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterUserModel model)
         {
             if (!ModelState.IsValid)
@@ -52,11 +36,12 @@ namespace Viato.Api.Controllers
                 EmailConfirmed = true, // TODO: Add email confirmation
             };
 
-            var identityResult = await _userManager.CreateAsync(user, model.Password);
+            var userCreationResult = await _userManager.CreateAsync(user, model.Password);
+            await _userManager.AddToRoleAsync(user, model.Role); // asume thahat this will not fail
 
-            if (!identityResult.Succeeded)
+            if (!userCreationResult.Succeeded)
             {
-                foreach (var error in identityResult.Errors)
+                foreach (var error in userCreationResult.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                     return BadRequest(ModelState);
@@ -66,6 +51,7 @@ namespace Viato.Api.Controllers
             return Ok(new RegisterResponseModel()
             {
                 UserId = user.Id,
+                Email = user.Email,
             });
         }
     }
