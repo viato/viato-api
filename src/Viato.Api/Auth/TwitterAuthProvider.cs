@@ -52,7 +52,7 @@ namespace Viato.Api.Auth
                 baseString += Uri.EscapeDataString(entry.Key + "=" + entry.Value + "&");
             }
 
-            baseString = baseString.Substring(0, baseString.Length - 3);
+            baseString = baseString[0..^3];
 
             var signingKey = Uri.EscapeDataString(consumerSecret) + "&" + Uri.EscapeDataString(oauth_token_secret);
 

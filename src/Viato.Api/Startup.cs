@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 using Viato.Api.Auth;
 using Viato.Api.Entities;
 using Viato.Api.Stores;
@@ -52,7 +53,8 @@ namespace Viato.Api
             .AddInMemoryIdentityResources(IdentityConfigs.Ids)
             .AddInMemoryApiResources(IdentityConfigs.Apis)
             .AddInMemoryClients(IdentityConfigs.Clients)
-            .AddAspNetIdentity<AppUser>();
+            .AddAspNetIdentity<AppUser>()
+            .AddProfileService<ProfileService>();
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
@@ -74,7 +76,9 @@ namespace Viato.Api
                 authorizationOptions.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
             });
 
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
             services.AddSwaggerGen(c =>
             {

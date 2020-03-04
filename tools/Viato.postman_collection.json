@@ -116,8 +116,8 @@
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/x-www-form-urlencoded",
-						"type": "text"
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
 					}
 				],
 				"body": {
@@ -125,22 +125,27 @@
 					"urlencoded": [
 						{
 							"key": "grant_type",
-							"value": "password",
-							"type": "text"
-						},
-						{
-							"key": "username",
-							"value": "artyom@beaxy.com",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "testTEST123!@#",
+							"value": "external",
 							"type": "text"
 						},
 						{
 							"key": "scope",
 							"value": "api",
+							"type": "text"
+						},
+						{
+							"key": "provider",
+							"value": "facebook",
+							"type": "text"
+						},
+						{
+							"key": "external_token",
+							"value": "EAAOZCNFRf46cBAOxDHhHMXjEBNGa42dw6XiTVI9SYcXj24GqJKZAs38ndpAe5TzwococYFmxZC1eZAIJXJhY3IxAEvlN4fGPl4zaZCOQsIlOE2eT1nKPUhK4zXY11VDmCOSCrdLSXCGDjUcY8Io39puStwuGAKeqtEIgAN1gh6eSaFZAvbG7bQlyycZAbePusE0M0ZB5HZClibUWi4oaKAkMaBrba0ZASM2auc6wERjEhbpAZDZD",
+							"type": "text"
+						},
+						{
+							"key": "role",
+							"value": "contributor",
 							"type": "text"
 						}
 					]

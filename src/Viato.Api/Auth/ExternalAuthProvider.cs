@@ -12,11 +12,12 @@ namespace Viato.Api.Auth
         private readonly IExternalAuthProvidersStore _providerStore;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public ExternalAuthProvider(
+        protected ExternalAuthProvider(
             ExternalProviderType providerType,
             IExternalAuthProvidersStore providerStore,
             IHttpClientFactory httpClientFactory)
         {
+            _providerType = providerType;
             _providerStore = providerStore;
             _httpClientFactory = httpClientFactory;
         }

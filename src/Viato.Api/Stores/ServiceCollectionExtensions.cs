@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Viato.Api.Stores;
 
 namespace Viato.Api.Stores
 {

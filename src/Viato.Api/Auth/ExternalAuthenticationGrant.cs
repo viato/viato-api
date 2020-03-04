@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Viato.Api.Entities;
 
@@ -130,7 +131,7 @@ namespace Viato.Api.Auth
                 if (result.Succeeded)
                 {
                     await _userManager.AddLoginAsync(newUser, new UserLoginInfo(provider, userExternalId, provider));
-                    await _userManager.AddToRoleAsync(newUser, role);
+                    await _userManager.AddClaimAsync(newUser, new Claim("role", role.ToString()));
                     var userClaims = await _userManager.GetClaimsAsync(newUser);
                     return new GrantValidationResult(newUser.Id.ToString(), provider, userClaims, provider, null);
                 }

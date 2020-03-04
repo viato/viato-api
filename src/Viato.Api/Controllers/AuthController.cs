@@ -1,9 +1,8 @@
-﻿using IdentityServer4.Services;
-using IdentityServer4.Stores;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Viato.Api.Entities;
 using Viato.Api.Models;
@@ -29,6 +28,12 @@ namespace Viato.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (!Enum.IsDefined(typeof(AppUserRole), model.Role))
+            {
+                ModelState.AddModelError(nameof(model.Role), $"{model.Role} is not valid role");
+                return BadRequest(ModelState);
+            }
+
             var user = new AppUser()
             {
                 UserName = model.UserName,
@@ -37,7 +42,6 @@ namespace Viato.Api.Controllers
             };
 
             var userCreationResult = await _userManager.CreateAsync(user, model.Password);
-            await _userManager.AddToRoleAsync(user, model.Role); // asume thahat this will not fail
 
             if (!userCreationResult.Succeeded)
             {
@@ -46,6 +50,13 @@ namespace Viato.Api.Controllers
                     ModelState.AddModelError("", error.Description);
                     return BadRequest(ModelState);
                 }
+            }
+
+            // asume that this will not fail, even if it fails, we don't need to stop it
+            var addRoleClaimResult = await _userManager.AddClaimAsync(user, new Claim("role", model.Role.ToString()));
+            if (!addRoleClaimResult.Succeeded)
+            {
+                // TODO: log
             }
 
             return Ok(new RegisterResponseModel()

@@ -1,10 +1,10 @@
-﻿using IdentityServer4;
-using IdentityServer4.Models;
+﻿using IdentityServer4.Models;
 using System.Collections.Generic;
+using System.Security.Claims;
 
-namespace Viato.Api
+namespace Viato.Api.Auth
 {
-    public class IdentityConfigs
+    public static class IdentityConfigs
     {
         public static IEnumerable<IdentityResource> Ids =>
             new List<IdentityResource>
@@ -32,9 +32,6 @@ namespace Viato.Api
                     RequireClientSecret = false,
                     AllowedScopes =
                     {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Email,
                         "api"
                     },
                     AccessTokenType = AccessTokenType.Jwt,

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Viato.Api.Entities;
 
 namespace Viato.Api.Models
 {
@@ -14,6 +15,11 @@ namespace Viato.Api.Models
         public string Password { get; set; }
 
         [Required]
-        public string Role { get; set; }
+        [DataType(DataType.Password)]
+        [Compare(nameof(Password))]
+        public string ConfirmPassword { get; set; }
+
+        [Required]
+        public AppUserRole Role { get; set; }
     }
 }
