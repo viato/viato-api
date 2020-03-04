@@ -119,6 +119,8 @@ namespace Viato.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
