@@ -43,8 +43,8 @@ namespace Viato.Api.Controllers
 
             var user = new AppUser()
             {
-                UserName = model.UserName,
-                Email = model.UserName,
+                UserName = model.Email,
+                Email = model.Email,
                 EmailConfirmed = false,
             };
 

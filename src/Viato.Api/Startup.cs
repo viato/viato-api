@@ -42,9 +42,15 @@ namespace Viato.Api
             services.AddStores();
             services.AddSendGridEmailSender(Configuration);
 
-            services.AddIdentity<AppUser, AppRole>()
-                .AddEntityFrameworkStores<ViatoContext>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            })
+            .AddEntityFrameworkStores<ViatoContext>()
+            .AddDefaultTokenProviders();
 
             var builder = services.AddIdentityServer(options =>
             {
