@@ -1,4 +1,4 @@
-﻿using IdentityServer4.Services;
+using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,32 +20,13 @@ namespace Viato.Api.Controllers
     public class AuthController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly IIdentityServerInteractionService _interaction;
-        private readonly IClientStore _clientStore;
-        private readonly IEventService _events;
-        private readonly IEmailSender _emailSender;
-        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(
-            UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager,
-            IIdentityServerInteractionService interaction,
-            IClientStore clientStore,
-            IEventService events,
-            IEmailSender emailSender,
-            ILogger<AuthController> logger)
+        public AuthController(UserManager<AppUser> userManager)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
-            _interaction = interaction ?? throw new ArgumentNullException(nameof(interaction));
-            _clientStore = clientStore ?? throw new ArgumentNullException(nameof(clientStore));
-            _events = events ?? throw new ArgumentNullException(nameof(events));
-            _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        [HttpPost("internal-register")]
+        [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterUserModel model)
         {
             if (!ModelState.IsValid)
@@ -60,11 +41,12 @@ namespace Viato.Api.Controllers
                 EmailConfirmed = false,
             };
 
-            var identityResult = await _userManager.CreateAsync(user, model.Password);
+            var userCreationResult = await _userManager.CreateAsync(user, model.Password);
+            await _userManager.AddToRoleAsync(user, model.Role); // asume thahat this will not fail
 
-            if (!identityResult.Succeeded)
+            if (!userCreationResult.Succeeded)
             {
-                foreach (var error in identityResult.Errors)
+                foreach (var error in userCreationResult.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                     return BadRequest(ModelState);
@@ -81,6 +63,7 @@ namespace Viato.Api.Controllers
             return Ok(new RegisterResponseModel()
             {
                 UserId = user.Id,
+                Email = user.Email,
             });
         }
 

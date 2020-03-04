@@ -5,4 +5,11 @@ namespace Viato.Api.Entities
     public class AppUser : IdentityUser<long>
     {
     }
+
+    public enum AppUserRole
+    {
+        SourceOrg,
+        Contributor,
+        DestinationOrg,
+    }
 }
