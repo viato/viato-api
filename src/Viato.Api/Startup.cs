@@ -23,10 +23,9 @@ namespace Viato.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var appSettingsSection = Configuration.GetSection("AppSettings");
+            var appSettingsSection = Configuration.GetSection(nameof(AppSettings));
             services.Configure<AppSettings>(appSettingsSection);
             var appSettings = appSettingsSection.Get<AppSettings>();
 
@@ -83,7 +82,6 @@ namespace Viato.Api
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

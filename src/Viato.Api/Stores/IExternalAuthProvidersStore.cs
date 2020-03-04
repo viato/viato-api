@@ -4,6 +4,6 @@ namespace Viato.Api.Stores
 {
     public interface IExternalAuthProvidersStore
     {
-        ExternalAuthProver Get(ExternalProviderType providerType);
+        ExternalAuthProvider Get(ExternalProviderType providerType);
     }
 }

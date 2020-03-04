@@ -1,6 +1,6 @@
 ﻿namespace Viato.Api.Entities
 {
-    public class ExternalAuthProver
+    public class ExternalAuthProvider
     {
         public string Name { get; set; }
         public ExternalProviderType Type { get; set; }

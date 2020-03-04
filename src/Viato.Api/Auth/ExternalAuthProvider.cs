@@ -21,7 +21,7 @@ namespace Viato.Api.Auth
             _httpClientFactory = httpClientFactory;
         }
 
-        public ExternalAuthProver Provider => _providerStore.Get(_providerType);
+        public Entities.ExternalAuthProvider Provider => _providerStore.Get(_providerType);
 
         public JObject GetUserInfo(string accessToken)
         {
