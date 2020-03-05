@@ -13,7 +13,8 @@ After adding/modifying any database entity please run following command from PM 
 - update-database
 
 ### Local-Testing
-You can find postman collection at: `/tools/Viato.postman_collection.json`
+You can find postman collection at: `/tools/Viato.postman_collection.json` .
+
 Also you can user swagger which is enabled by default for dev environment.
 
 ### Coding Standards
