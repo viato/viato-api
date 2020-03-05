@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Viato.Api
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1052:Static holder types should be Static or NotInheritable", Justification = "This is only entry point.")]
     public class Program
     {
         public static void Main(string[] args)

@@ -1,10 +1,10 @@
-﻿using IdentityServer4.Extensions;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Viato.Api.Entities;
 
 namespace Viato.Api.Auth

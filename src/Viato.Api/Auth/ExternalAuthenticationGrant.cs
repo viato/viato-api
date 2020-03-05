@@ -1,11 +1,11 @@
-﻿using IdentityServer4.Models;
-using IdentityServer4.Validation;
-using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityServer4.Models;
+using IdentityServer4.Validation;
+using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json.Linq;
 using Viato.Api.Entities;
 
 namespace Viato.Api.Auth
@@ -89,7 +89,6 @@ namespace Viato.Api.Auth
             var externalId = userInfo.Value<string>("id");
             if (!string.IsNullOrWhiteSpace(externalId))
             {
-
                 var user = await _userManager.FindByLoginAsync(provider, externalId);
                 if (user != null)
                 {
@@ -112,7 +111,7 @@ namespace Viato.Api.Auth
             {
                 var customResponse = new Dictionary<string, object>
                 {
-                    { "userInfo", userInfo }
+                    { "userInfo", userInfo },
                 };
 
                 return new GrantValidationResult(TokenRequestErrors.InvalidRequest, "could not retrieve user's email from the given provider", customResponse);

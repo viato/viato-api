@@ -17,12 +17,12 @@ namespace Viato.Api.UnitTests.Tor
             var torToken = new TorToken(Guid.Parse(id), sourceOrgId, destOrgId, amount, null);
 
             // Act
-            var token = torToken.GetToken(ecKey.PrivateKey);
+            var token = torToken.GetToken(ecKey.GetPrivateKey());
 
             // Assert
             var parsedToken = TorToken.Parse(token);
             Assert.True(token.Length <= 500 /* just make sure that we don't have huge token */);
-            Assert.True(parsedToken.Verify(ecKey.PublicKey));
+            Assert.True(parsedToken.Verify(ecKey.GetPublicKey()));
             Assert.Equal(torToken.SourceOrgId, parsedToken.SourceOrgId);
             Assert.Equal(torToken.DestinationOrgId, parsedToken.DestinationOrgId);
             Assert.Equal(torToken.Amount, parsedToken.Amount);

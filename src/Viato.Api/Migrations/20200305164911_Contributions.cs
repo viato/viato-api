@@ -34,7 +34,7 @@ namespace Viato.Api.Migrations
                     AmountLimit = table.Column<decimal>(nullable: false),
                     DateLimit = table.Column<DateTimeOffset>(nullable: true),
                     OwnerPublicKey = table.Column<string>(nullable: true),
-                    OwnerPrivateKey = table.Column<string>(nullable: true)
+                    OwnerPrivateKey = table.Column<string>(nullable: true),
                 },
                 constraints: table =>
                 {
@@ -61,7 +61,7 @@ namespace Viato.Api.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Status = table.Column<int>(nullable: false),
                     Network = table.Column<string>(nullable: true),
-                    BlockchainTransactionId = table.Column<string>(nullable: true)
+                    BlockchainTransactionId = table.Column<string>(nullable: true),
                 },
                 constraints: table =>
                 {
@@ -80,7 +80,7 @@ namespace Viato.Api.Migrations
                     TorTokenId = table.Column<string>(nullable: true),
                     TorToken = table.Column<string>(nullable: true),
                     ContributionProofId = table.Column<long>(nullable: true),
-                    IsPrivate = table.Column<bool>(nullable: false)
+                    IsPrivate = table.Column<bool>(nullable: false),
                 },
                 constraints: table =>
                 {

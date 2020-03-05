@@ -1,18 +1,17 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 
 namespace Viato.Api.Notification
 {
-
     public class RazorEmailTemplateRenderer : IEmailTemplateRenderer
     {
         private readonly IRazorViewEngine _razorViewEngine;
@@ -41,7 +40,7 @@ namespace Viato.Api.Notification
 
             var viewDictionary = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
             {
-                Model = model
+                Model = model,
             };
 
             var viewContext = new ViewContext(

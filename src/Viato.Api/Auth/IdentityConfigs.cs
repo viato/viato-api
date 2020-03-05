@@ -1,5 +1,5 @@
-﻿using IdentityServer4.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using IdentityServer4.Models;
 
 namespace Viato.Api.Auth
 {
@@ -13,11 +13,10 @@ namespace Viato.Api.Auth
                 new IdentityResources.Email(),
             };
 
-
         public static IEnumerable<ApiResource> Apis =>
             new List<ApiResource>
             {
-                new ApiResource("api", "Viato API")
+                new ApiResource("api", "Viato API"),
             };
 
         public static IEnumerable<Client> Clients =>
@@ -31,14 +30,14 @@ namespace Viato.Api.Auth
                     RequireClientSecret = false,
                     AllowedScopes =
                     {
-                        "api"
+                        "api",
                     },
                     AccessTokenType = AccessTokenType.Jwt,
                     AlwaysIncludeUserClaimsInIdToken = true,
                     AllowOfflineAccess = true,
                     AlwaysSendClientClaims = true,
                     Enabled = true,
-                }
+                },
             };
     }
 }

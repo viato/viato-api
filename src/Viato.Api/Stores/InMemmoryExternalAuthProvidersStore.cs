@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Options;
 using Viato.Api.Entities;
 
 namespace Viato.Api.Stores
@@ -16,18 +16,18 @@ namespace Viato.Api.Stores
                 new ExternalAuthProvider
                 {
                     Name = "Facebook",
-                    UserInfoEndPoint = appSettings.Value.FacebookUserInfoEndpoint.ToString()
+                    UserInfoEndPoint = appSettings.Value.FacebookUserInfoEndpoint.ToString(),
                 },
                 new ExternalAuthProvider
                 {
                     Name = "Google",
-                    UserInfoEndPoint = appSettings.Value.GoogleUserInfoEndpoint.ToString()
+                    UserInfoEndPoint = appSettings.Value.GoogleUserInfoEndpoint.ToString(),
                 },
                 new ExternalAuthProvider
                 {
                     Name = "Twitter",
-                    UserInfoEndPoint = appSettings.Value.TwitterUserInfoEndpoint.ToString()
-                }
+                    UserInfoEndPoint = appSettings.Value.TwitterUserInfoEndpoint.ToString(),
+                },
             };
         }
 

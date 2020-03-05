@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System;
-using System.Threading.Tasks;
 
 namespace Viato.Api.Notification
 {
@@ -27,12 +27,12 @@ namespace Viato.Api.Notification
                 {
                     BypassListManagement = new BypassListManagement
                     {
-                        Enable = true
-                    }
+                        Enable = true,
+                    },
                 },
                 From = new EmailAddress(_options.FromEmail, _options.FromName),
                 Subject = subject,
-                HtmlContent = htmlBody
+                HtmlContent = htmlBody,
             };
 
             message.AddTo(email);
@@ -42,7 +42,7 @@ namespace Viato.Api.Notification
 
         public async Task SendAsync<T>(string email, string subject, string template, T model)
         {
-            var emailBody = await _renderer.RenderAsync(template, model);         
+            var emailBody = await _renderer.RenderAsync(template, model);
             await SendAsync(email, subject, emailBody);
         }
     }

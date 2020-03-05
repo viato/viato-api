@@ -22,32 +22,14 @@ namespace Viato.Api.Tor
         }
 
         public Guid Id { get; private set; }
+
         public long SourceOrgId { get; private set; }
+
         public long DestinationOrgId { get; private set; }
+
         public decimal Amount { get; private set; }
+
         public string Signature { get; private set; }
-
-        public bool Verify(byte[] pubKey)
-        {
-            var tokenPayload = GetTokenPayload();
-            return ECKey.Verify(tokenPayload.GetBytes(), Signature.ToByteArray(), pubKey);
-        }
-
-        // TODO: in the future it should be implemented in UI
-        public string GetToken(byte[] privKey)
-        {
-            var ecKey = ECKey.FromPrivateKey(privKey);
-            var tokenPayload = GetTokenPayload();
-            var signature = ecKey.Sign(tokenPayload.GetBytes());
-            return Convert.ToBase64String(
-                    Encoding.UTF8.GetBytes($"{tokenPayload}{_sep}{signature.ToHex()}")
-                );
-        }
-
-        private string GetTokenPayload()
-        {
-            return $"{Id}{_sep}{SourceOrgId}{_sep}{DestinationOrgId}{_sep}{Amount}";
-        }
 
         public static TorToken Parse(string token)
         {
@@ -64,6 +46,27 @@ namespace Viato.Api.Tor
                 long.Parse(tokenArray[2]),
                 decimal.Parse(tokenArray[3]),
                 tokenArray[4]);
+        }
+
+        public bool Verify(byte[] pubKey)
+        {
+            var tokenPayload = GetTokenPayload();
+            return ECKey.Verify(tokenPayload.GetBytes(), Signature.ToByteArray(), pubKey);
+        }
+
+        // TODO: in the future it should be implemented in UI
+        public string GetToken(byte[] privKey)
+        {
+            var ecKey = ECKey.FromPrivateKey(privKey);
+            var tokenPayload = GetTokenPayload();
+            var signature = ecKey.Sign(tokenPayload.GetBytes());
+            return Convert.ToBase64String(
+                    Encoding.UTF8.GetBytes($"{tokenPayload}{_sep}{signature.ToHex()}"));
+        }
+
+        private string GetTokenPayload()
+        {
+            return $"{Id}{_sep}{SourceOrgId}{_sep}{DestinationOrgId}{_sep}{Amount}";
         }
     }
 }

@@ -22,7 +22,5 @@ namespace Viato.Api.Notification
             services.AddTransient<IEmailSender, SendGridEmailSender>();
             return services;
         }
-
-
     }
 }

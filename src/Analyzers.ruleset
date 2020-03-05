@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Rules for StyleCop.Analyzers" Description="Code analysis rules for viato-api." ToolsVersion="14.0">
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+    <Rule Id="SA0001" Action="None" />
+    <Rule Id="SA1200" Action="None" /> <!--SA1200UsingDirectivesMustBePlacedCorrectly-->
+    <Rule Id="SA1633" Action="None" /> <!--SA1633FileMustHaveHeader-->
+    <Rule Id="SA1101" Action="None" /> <!--SA1101PrefixLocalCallsWithThis-->
+    <Rule Id="SX1101" Action="Warning" /> <!--SX1101DoNotPrefixLocalMembersWithThis-->
+    <Rule Id="SA1309" Action="None" /> <!--SA1309FieldNamesMustNotBeginWithUnderscore-->
+    <Rule Id="SX1309" Action="Warning" /> <!--SX1309FieldNamesMustBeginWithUnderscore-->
+    <Rule Id="SX1309S" Action="Warning" /> <!--SX1309SStaticFieldNamesMustBeginWithUnderscore-->
+    <Rule Id="SA1600" Action="None" /> <!--SA1600ElementsMustBeDocumented-->
+    <Rule Id="SA1601" Action="None" /> <!--SA1601PartialElementsMustBeDocumented-->
+    <Rule Id="SA1602" Action="None" /> <!--SA1602EnumerationItemsMustBeDocumented-->
+  </Rules>
+</RuleSet>

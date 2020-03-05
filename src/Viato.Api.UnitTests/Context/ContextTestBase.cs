@@ -1,12 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Viato.Api.UnitTests.Context
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1063:Implement IDisposable Correctly", Justification = "Calm down, it's just test.")]
     public class ContextTestBase : IDisposable
     {
-        protected readonly ViatoContext Context;
-
         public ContextTestBase()
         {
             var options = new DbContextOptionsBuilder<ViatoContext>()
@@ -17,27 +16,12 @@ namespace Viato.Api.UnitTests.Context
             Context = new ViatoContext(options);
         }
 
-        #region IDisposable Support
-        private bool disposedValue = false; 
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    Context.Database.EnsureDeleted();
-                    Context.Dispose();
-                }
-
-                disposedValue = true;
-            }
-        }
+        protected ViatoContext Context { get; private set; }
 
         public void Dispose()
         {
-            Dispose(true);
+            Context.Database.EnsureDeleted();
+            Context.Dispose();
         }
-        #endregion
     }
 }

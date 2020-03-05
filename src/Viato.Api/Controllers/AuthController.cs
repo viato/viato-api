@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Viato.Api.Entities;
 using Viato.Api.Models;
 using Viato.Api.Notification;
@@ -50,7 +50,7 @@ namespace Viato.Api.Controllers
             {
                 foreach (var error in userCreationResult.Errors)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    ModelState.AddModelError(string.Empty, error.Description);
                     return BadRequest(ModelState);
                 }
             }
@@ -93,7 +93,7 @@ namespace Viato.Api.Controllers
                 {
                     foreach (var error in identityResult.Errors)
                     {
-                        ModelState.AddModelError("", error.Description);
+                        ModelState.AddModelError(string.Empty, error.Description);
                         return BadRequest(ModelState);
                     }
                 }
@@ -143,7 +143,7 @@ namespace Viato.Api.Controllers
                 {
                     foreach (var error in identityResult.Errors)
                     {
-                        ModelState.AddModelError("", error.Description);
+                        ModelState.AddModelError(string.Empty, error.Description);
                         return BadRequest(ModelState);
                     }
                 }

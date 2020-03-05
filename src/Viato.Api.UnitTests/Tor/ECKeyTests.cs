@@ -16,7 +16,7 @@ namespace Viato.Api.UnitTests.Tor
             var signature = ecKey.Sign(msg);
 
             // Assert
-            Assert.True(ECKey.Verify(msg, signature, ecKey.PublicKey));
+            Assert.True(ECKey.Verify(msg, signature, ecKey.GetPublicKey()));
         }
     }
 }

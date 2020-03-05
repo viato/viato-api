@@ -1,26 +1,25 @@
-﻿using Sodium;
-using System;
+﻿using System;
+using Sodium;
 
 namespace Viato.Api.Tor
 {
     public class ECKey
     {
+        private byte[] _privateKey;
+        private byte[] _publicKey;
+
         public ECKey()
         {
             var keys = PublicKeyAuth.GenerateKeyPair();
-            PublicKey = keys.PublicKey;
-            PrivateKey = keys.PrivateKey;
+            SetPublicKey(keys.PublicKey);
+            SetPrivateKey(keys.PrivateKey);
         }
 
         public ECKey(byte[] pubKey, byte[] privKey)
         {
-            PublicKey = pubKey ?? throw new ArgumentNullException(nameof(pubKey));
-            PrivateKey = privKey ?? throw new ArgumentNullException(nameof(privKey));
+            SetPublicKey(pubKey ?? throw new ArgumentNullException(nameof(pubKey)));
+            SetPrivateKey(privKey ?? throw new ArgumentNullException(nameof(privKey)));
         }
-
-        public byte[] PrivateKey { get; private set; }
-
-        public byte[] PublicKey { get; private set; }
 
         public static ECKey FromPrivateKey(byte[] privateKey)
         {
@@ -33,14 +32,34 @@ namespace Viato.Api.Tor
             return PublicKeyAuth.VerifyDetached(signature, msg, pubKey);
         }
 
+        public byte[] GetPrivateKey()
+        {
+            return _privateKey;
+        }
+
+        public byte[] GetPublicKey()
+        {
+            return _publicKey;
+        }
+
         public byte[] Sign(byte[] msg)
         {
-            return PublicKeyAuth.SignDetached(msg, PrivateKey);
+            return PublicKeyAuth.SignDetached(msg, GetPrivateKey());
         }
 
         public bool Verify(byte[] msg, byte[] signature)
         {
-            return Verify(msg, signature, PublicKey);
+            return Verify(msg, signature, GetPublicKey());
+        }
+
+        private void SetPrivateKey(byte[] value)
+        {
+            _privateKey = value;
+        }
+
+        private void SetPublicKey(byte[] value)
+        {
+            _publicKey = value;
         }
     }
 }

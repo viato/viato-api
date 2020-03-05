@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Net.Http;
+using Newtonsoft.Json.Linq;
 using Viato.Api.Entities;
 using Viato.Api.Stores;
 

@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
-using Viato.Api.Stores;
 using Viato.Api.Entities;
+using Viato.Api.Stores;
 
 namespace Viato.Api.Auth
 {

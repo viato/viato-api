@@ -1,11 +1,11 @@
-﻿using System.Net.Http;
-using Viato.Api.Stores;
-using Viato.Api.Entities;
-using System;
-using System.Text;
-using System.Security.Cryptography;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using Viato.Api.Entities;
+using Viato.Api.Stores;
 
 namespace Viato.Api.Auth
 {
@@ -21,7 +21,10 @@ namespace Viato.Api.Auth
             var userInfoEndpoint = Provider.UserInfoEndPoint;
 
             var tokenString = accessToken.Split('&').ToDictionary(x => x.Split('=')[0], x => x.Split('=')[1]);
-            if (tokenString.Count < 4) return null;
+            if (tokenString.Count < 4)
+            {
+                return null;
+            }
 
             var oauth_consumer_key = tokenString["oauth_consumer_key"];
             var consumerSecret = tokenString["oauth_consumer_secret"];
@@ -41,7 +44,7 @@ namespace Viato.Api.Auth
                         { "oauth_nonce", oauth_nonce },
                         { "oauth_signature_method", oauth_signature_method },
                         { "oauth_timestamp", oauth_timestamp },
-                        { "oauth_token", oauth_token }
+                        { "oauth_token", oauth_token },
                     };
 
             string baseString = string.Empty;
@@ -60,7 +63,7 @@ namespace Viato.Api.Auth
 
             var signatureString = Convert.ToBase64String(hasher.ComputeHash(new ASCIIEncoding().GetBytes(baseString)));
 
-            var authorizationHeaderParams = String.Empty;
+            var authorizationHeaderParams = string.Empty;
             authorizationHeaderParams += "OAuth ";
             authorizationHeaderParams += "oauth_nonce=" + "\"" +
                 Uri.EscapeDataString(oauth_nonce) + "\",";
