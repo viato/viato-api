@@ -85,7 +85,7 @@ namespace Viato.Api
             });
 
             services
-                .AddControllers()
+                .AddMvc()
                 .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
             services.AddSwaggerGen(c =>
