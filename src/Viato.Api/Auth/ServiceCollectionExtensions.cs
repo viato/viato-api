@@ -1,5 +1,4 @@
-﻿using IdentityServer4.Services;
-using IdentityServer4.Validation;
+﻿using IdentityServer4.Validation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Viato.Api.Auth
