@@ -1,6 +1,5 @@
 ﻿using IdentityServer4.Models;
 using System.Collections.Generic;
-using System.Security.Claims;
 
 namespace Viato.Api.Auth
 {
