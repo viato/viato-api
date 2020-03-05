@@ -16,7 +16,7 @@ namespace Viato.Api.Tor
             return hex.ToString();
         }
 
-        public static byte[] ToByteArray(this string hex)
+        public static byte[] HexToByteArray(this string hex)
         {
             hex = Remove0x(hex);
             int numberChars = hex.Length;

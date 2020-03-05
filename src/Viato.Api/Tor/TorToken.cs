@@ -51,11 +51,11 @@ namespace Viato.Api.Tor
         public bool Verify(byte[] pubKey)
         {
             var tokenPayload = GetTokenPayload();
-            return ECKey.Verify(tokenPayload.GetBytes(), Signature.ToByteArray(), pubKey);
+            return ECKey.Verify(tokenPayload.GetBytes(), Signature.HexToByteArray(), pubKey);
         }
 
         // TODO: in the future it should be implemented in UI
-        public string GetToken(byte[] privKey)
+        public string Protect(byte[] privKey)
         {
             var ecKey = ECKey.FromPrivateKey(privKey);
             var tokenPayload = GetTokenPayload();
