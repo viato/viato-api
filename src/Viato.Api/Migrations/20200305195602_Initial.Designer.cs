@@ -10,8 +10,8 @@ using Viato.Api;
 namespace Viato.Api.Migrations
 {
     [DbContext(typeof(ViatoContext))]
-    [Migration("20200305164911_Contributions")]
-    partial class Contributions
+    [Migration("20200305195602_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,34 @@ namespace Viato.Api.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<long>", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("character varying(256)")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
@@ -122,34 +150,6 @@ namespace Viato.Api.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Viato.Api.Entities.AppRole", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles");
-                });
-
             modelBuilder.Entity("Viato.Api.Entities.AppUser", b =>
                 {
                     b.Property<long>("Id")
@@ -162,12 +162,6 @@ namespace Viato.Api.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("DnsVerified")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("DomainName")
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -235,7 +229,7 @@ namespace Viato.Api.Migrations
                     b.Property<long>("ContributionPipelineId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("ContributionProofId")
+                    b.Property<long>("ContributionProofId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("ContributorId")
@@ -280,7 +274,10 @@ namespace Viato.Api.Migrations
                     b.Property<DateTimeOffset?>("DateLimit")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("DestinationOrgId")
+                    b.Property<long>("DestinationOrganizationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("OwnerPrivateKey")
@@ -289,7 +286,7 @@ namespace Viato.Api.Migrations
                     b.Property<string>("OwnerPublicKey")
                         .HasColumnType("text");
 
-                    b.Property<long>("SourceOrgId")
+                    b.Property<long>("SourceOrganizationId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Status")
@@ -300,9 +297,13 @@ namespace Viato.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DestinationOrgId");
+                    b.HasIndex("DestinationOrganizationId")
+                        .IsUnique();
 
-                    b.HasIndex("SourceOrgId");
+                    b.HasIndex("OrganizationId");
+
+                    b.HasIndex("SourceOrganizationId")
+                        .IsUnique();
 
                     b.ToTable("ContributionPipelines");
                 });
@@ -328,9 +329,41 @@ namespace Viato.Api.Migrations
                     b.ToTable("ContributionProof");
                 });
 
+            modelBuilder.Entity("Viato.Api.Entities.Organization", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<long>("AppUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Descripiton")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LogoBlobId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("Organizations");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
-                    b.HasOne("Viato.Api.Entities.AppRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<long>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -357,7 +390,7 @@ namespace Viato.Api.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
                 {
-                    b.HasOne("Viato.Api.Entities.AppRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<long>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -388,8 +421,10 @@ namespace Viato.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("Viato.Api.Entities.ContributionProof", "ContributionProof")
-                        .WithMany()
-                        .HasForeignKey("ContributionProofId");
+                        .WithMany("Contributions")
+                        .HasForeignKey("ContributionProofId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Viato.Api.Entities.AppUser", "Contributor")
                         .WithMany()
@@ -400,15 +435,28 @@ namespace Viato.Api.Migrations
 
             modelBuilder.Entity("Viato.Api.Entities.ContributionPipeline", b =>
                 {
-                    b.HasOne("Viato.Api.Entities.AppUser", "DestinationOrg")
-                        .WithMany()
-                        .HasForeignKey("DestinationOrgId")
+                    b.HasOne("Viato.Api.Entities.Organization", "DestinationOrganization")
+                        .WithOne()
+                        .HasForeignKey("Viato.Api.Entities.ContributionPipeline", "DestinationOrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Viato.Api.Entities.AppUser", "SourceOrg")
-                        .WithMany()
-                        .HasForeignKey("SourceOrgId")
+                    b.HasOne("Viato.Api.Entities.Organization", null)
+                        .WithMany("ContributionPiplines")
+                        .HasForeignKey("OrganizationId");
+
+                    b.HasOne("Viato.Api.Entities.Organization", "SourceOrganizaton")
+                        .WithOne()
+                        .HasForeignKey("Viato.Api.Entities.ContributionPipeline", "SourceOrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Viato.Api.Entities.Organization", b =>
+                {
+                    b.HasOne("Viato.Api.Entities.AppUser", "AppUser")
+                        .WithMany("Organizations")
+                        .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

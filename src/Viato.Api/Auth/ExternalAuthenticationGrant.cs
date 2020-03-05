@@ -56,20 +56,6 @@ namespace Viato.Api.Auth
                 return;
             }
 
-            var roleString = context.Request.Raw.Get("role");
-            if (string.IsNullOrWhiteSpace(roleString))
-            {
-                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidRequest, "invalid role");
-                return;
-            }
-
-            var role = (AppUserRole)Enum.Parse(typeof(AppUserRole), roleString, ignoreCase: true);
-            if (!Enum.IsDefined(typeof(AppUserRole), role))
-            {
-                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidRequest, "invalid role");
-                return;
-            }
-
             var providerType = (ExternalProviderType)Enum.Parse(typeof(ExternalProviderType), provider, ignoreCase: true);
 
             if (!Enum.IsDefined(typeof(ExternalProviderType), providerType))
@@ -98,11 +84,11 @@ namespace Viato.Api.Auth
                 }
             }
 
-            context.Result = await ProcessUserAsync(userInfo, provider, roleString);
+            context.Result = await ProcessUserAsync(userInfo, provider);
             return;
         }
 
-        public async Task<GrantValidationResult> ProcessUserAsync(JObject userInfo, string provider, string role)
+        public async Task<GrantValidationResult> ProcessUserAsync(JObject userInfo, string provider)
         {
             var userEmail = userInfo.Value<string>("email");
             var userExternalId = userInfo.Value<string>("id");
@@ -130,7 +116,6 @@ namespace Viato.Api.Auth
                 if (result.Succeeded)
                 {
                     await _userManager.AddLoginAsync(newUser, new UserLoginInfo(provider, userExternalId, provider));
-                    await _userManager.AddClaimAsync(newUser, new Claim("role", role.ToString()));
                     var userClaims = await _userManager.GetClaimsAsync(newUser);
                     return new GrantValidationResult(newUser.Id.ToString(), provider, userClaims, provider, null);
                 }

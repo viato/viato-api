@@ -31,12 +31,6 @@ namespace Viato.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (!Enum.IsDefined(typeof(AppUserRole), model.Role))
-            {
-                ModelState.AddModelError(nameof(model.Role), $"{model.Role} is not valid role");
-                return BadRequest(ModelState);
-            }
-
             var user = new AppUser()
             {
                 UserName = model.Email,
@@ -53,12 +47,6 @@ namespace Viato.Api.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                     return BadRequest(ModelState);
                 }
-            }
-
-            var addRoleClaimResult = await _userManager.AddClaimAsync(user, new Claim("role", model.Role.ToString()));
-            if (!addRoleClaimResult.Succeeded)
-            {
-                // TOOD add warning log.
             }
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

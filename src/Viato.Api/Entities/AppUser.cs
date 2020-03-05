@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace Viato.Api.Entities
 {
     public class AppUser : IdentityUser<long>
     {
-        public string DomainName { get; set; }
-
-        public bool DnsVerified { get; set; }
+        public virtual List<Organization> Organizations { get; set; } = new List<Organization>();
     }
 }

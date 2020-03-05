@@ -18,17 +18,15 @@ namespace Viato.Api.Entities
         LimitByDate,
     }
 
-    public class ContributionPipeline
+    public class ContributionPipeline : EntityBase
     {
-        public long Id { get; set; }
-
         public ContributionPipelineStatus Status { get; set; } = ContributionPipelineStatus.Inactive;
 
         public ContributionPipelineTypes Types { get; set; } = ContributionPipelineTypes.NoLimit;
 
-        public long SourceOrgId { get; set; }
+        public long SourceOrganizationId { get; set; }
 
-        public long DestinationOrgId { get; set; }
+        public long DestinationOrganizationId { get; set; }
 
         public string ContributionCurrency { get; set; }
 
@@ -42,9 +40,9 @@ namespace Viato.Api.Entities
 
         public string OwnerPrivateKey { get; set; } // TODO to be removed later, we will just store public key
 
-        public virtual AppUser SourceOrg { get; set; }
+        public virtual Organization SourceOrganizaton { get; set; }
 
-        public virtual AppUser DestinationOrg { get; set; }
+        public virtual Organization DestinationOrganization { get; set; }
 
         public virtual List<Contribution> Contributions { get; set; } = new List<Contribution>();
     }

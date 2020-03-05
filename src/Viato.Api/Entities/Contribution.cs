@@ -1,9 +1,7 @@
 ﻿namespace Viato.Api.Entities
 {
-    public class Contribution
+    public class Contribution : EntityBase
     {
-        public long Id { get; set; }
-
         public long ContributionPipelineId { get; set; }
 
         public long ContributorId { get; set; }
@@ -14,7 +12,7 @@
 
         public string TorToken { get; set; }
 
-        public long? ContributionProofId { get; set; }
+        public long ContributionProofId { get; set; }
 
         public bool IsPrivate { get; set; }
 

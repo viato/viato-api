@@ -1,4 +1,6 @@
-﻿namespace Viato.Api.Entities
+﻿using System.Collections.Generic;
+
+namespace Viato.Api.Entities
 {
     public enum ContributionProofStatus
     {
@@ -7,14 +9,14 @@
         Succeeded,
     }
 
-    public class ContributionProof
+    public class ContributionProof : EntityBase
     {
-        public long Id { get; set; }
-
         public ContributionProofStatus Status { get; set; }
 
         public string Network { get; set; }
 
         public string BlockchainTransactionId { get; set; }
+
+        public virtual List<Contribution> Contributions { get; set; } = new List<Contribution>();
     }
 }

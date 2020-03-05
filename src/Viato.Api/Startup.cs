@@ -41,7 +41,7 @@ namespace Viato.Api
             services.AddStores();
             services.AddSendGridEmailSender(Configuration);
 
-            services.AddIdentity<AppUser, AppRole>(options =>
+            services.AddIdentity<AppUser, IdentityRole<long>>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireDigit = true;
