@@ -17,7 +17,7 @@ namespace Viato.Api.UnitTests.Tor
             var torToken = new TorToken(Guid.Parse(id), sourceOrgId, destOrgId, amount, null);
 
             // Act
-            var token = torToken.GetToken(ecKey.GetPrivateKey());
+            var token = torToken.Protect(ecKey.GetPrivateKey());
 
             // Assert
             var parsedToken = TorToken.Parse(token);

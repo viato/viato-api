@@ -30,6 +30,8 @@ namespace Viato.Api.Entities
 
         public string ContributionCurrency { get; set; }
 
+        public string ImageBlobId { get; set; }
+
         public decimal CollectedAmount { get; set; }
 
         public decimal AmountLimit { get; set; }
