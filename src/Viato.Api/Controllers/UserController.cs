@@ -1,5 +1,6 @@
-using System;
-using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,14 +11,14 @@ using Viato.Api.Notification;
 
 namespace Viato.Api.Controllers
 {
-    [AllowAnonymous]
-    [Route("auth")]
-    public class AuthController : Controller
+    [Authorize]
+    [Route("user")]
+    public class UserController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public AuthController(UserManager<AppUser> userManager, IEmailSender emailSender)
+        public UserController(UserManager<AppUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
@@ -135,6 +136,76 @@ namespace Viato.Api.Controllers
                         return BadRequest(ModelState);
                     }
                 }
+            }
+
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("two-factor")]
+        public async Task<IActionResult> GetTwoFactor()
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+
+            if (user.TwoFactorEnabled)
+            {
+                return BadRequest();
+            }
+
+            var code = await _userManager.GetAuthenticatorKeyAsync(user);
+            if (string.IsNullOrEmpty(code))
+            {
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                code = await _userManager.GetAuthenticatorKeyAsync(user);
+            }
+
+            var response = new TwoFactorResponseModel
+            {
+                Code = code,
+            };
+
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("two-factor")]
+        public async Task<IActionResult> SetTwoFactor([FromBody] SetTwoFactorModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+
+            var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
+                user, _userManager.Options.Tokens.AuthenticatorTokenProvider, model.Code);
+
+            if (!is2faTokenValid)
+            {
+                return BadRequest();
+            }
+
+            var identityResult = await _userManager.SetTwoFactorEnabledAsync(user, model.Enabled);
+
+            if (!identityResult.Succeeded)
+            {
+                foreach (var error in identityResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                    return BadRequest(ModelState);
+                }
+            }
+
+            if (model.Enabled)
+            {
+                var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
+                var response = new RecoveryCodeResponseModel
+                {
+                    RecoveryCodes = recoveryCodes.ToArray(),
+                };
+
+                return Ok(response);
             }
 
             return Ok();
