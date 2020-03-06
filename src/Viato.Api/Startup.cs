@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +37,7 @@ namespace Viato.Api
                 options.UseNpgsql(appSettings.PostgresConnectionString);
             });
 
+            services.AddAutoMapper(typeof(Startup));
             services.AddHttpClient();
             services.AddAuthServices();
             services.AddStores();

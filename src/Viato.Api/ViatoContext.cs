@@ -30,7 +30,6 @@ namespace Viato.Api
                 .HasOne(x => x.DestinationOrganization)
                 .WithOne()
                 .HasForeignKey<ContributionPipeline>(p => p.DestinationOrganizationId);
-
         }
     }
 }
