@@ -3,12 +3,10 @@ branches:
   only:
   - master
 init:
-  # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
 install:
 before_build:
   - cmd: dotnet --version
-  - cmd: dotnet restore ./src/Viato.Api/Viato.Api.csproj --verbosity m
 build_script:
   - cmd: dotnet publish ./src/Viato.Api/Viato.Api.csproj
 after_build:
@@ -18,10 +16,7 @@ artifacts:
    type: WebDeployPackage
 clone_depth: 1
 test_script:
-  # restore packages for our unit tests
-  - cmd: dotnet restore ./src/Viato.Api.UnitTests/Viato.Api.UnitTests.csproj --verbosity m
-  # run the unit tests (requires changing into the test directory)
   - cmd: cd src/Viato.Api.UnitTests
-  - cmd: dotnet xunit
+  - cmd: dotnet test
 on_finish :
 deploy: off
