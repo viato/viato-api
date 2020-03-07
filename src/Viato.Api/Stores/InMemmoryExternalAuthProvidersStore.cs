@@ -9,24 +9,24 @@ namespace Viato.Api.Stores
     {
         private readonly IEnumerable<ExternalAuthProvider> _providers;
 
-        public InMemmoryExternalAuthProvidersStore(IOptions<AppSettings> appSettings)
+        public InMemmoryExternalAuthProvidersStore(IOptions<ExternalProviderOptions> externalProviderOptions)
         {
             _providers = new List<ExternalAuthProvider>()
             {
                 new ExternalAuthProvider
                 {
                     Name = "Facebook",
-                    UserInfoEndPoint = appSettings.Value.FacebookUserInfoEndpoint.ToString(),
+                    UserInfoEndPoint = externalProviderOptions.Value.FacebookUserInfoEndpoint.ToString(),
                 },
                 new ExternalAuthProvider
                 {
                     Name = "Google",
-                    UserInfoEndPoint = appSettings.Value.GoogleUserInfoEndpoint.ToString(),
+                    UserInfoEndPoint = externalProviderOptions.Value.GoogleUserInfoEndpoint.ToString(),
                 },
                 new ExternalAuthProvider
                 {
                     Name = "Twitter",
-                    UserInfoEndPoint = appSettings.Value.TwitterUserInfoEndpoint.ToString(),
+                    UserInfoEndPoint = externalProviderOptions.Value.TwitterUserInfoEndpoint.ToString(),
                 },
             };
         }

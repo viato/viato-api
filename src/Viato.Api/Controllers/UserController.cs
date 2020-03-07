@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,6 @@ using Viato.Api.Notification;
 
 namespace Viato.Api.Controllers
 {
-    [Authorize]
     [Route("user")]
     public class UserController : Controller
     {

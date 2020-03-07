@@ -2,10 +2,8 @@
 
 namespace Viato.Api
 {
-    public class AppSettings
+    public class ExternalProviderOptions
     {
-        public string PostgresConnectionString { get; set; }
-
         public Uri GoogleUserInfoEndpoint { get; set; }
 
         public Uri TwitterUserInfoEndpoint { get; set; }

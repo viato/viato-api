@@ -28,13 +28,12 @@ namespace Viato.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var appSettingsSection = Configuration.GetSection(nameof(AppSettings));
-            services.Configure<AppSettings>(appSettingsSection);
-            var appSettings = appSettingsSection.Get<AppSettings>();
+            var section = Configuration.GetSection(nameof(ExternalProviderOptions));
+            services.Configure<ExternalProviderOptions>(section);
 
             services.AddDbContext<ViatoContext>(options =>
             {
-                options.UseNpgsql(appSettings.PostgresConnectionString);
+                options.UseNpgsql(Configuration.GetConnectionString("PostgresViatoDb"));
             });
 
             services.AddAutoMapper(typeof(Startup));
@@ -107,8 +106,10 @@ namespace Viato.Api
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "It's default function for asp.net core and colled once.")]
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ViatoContext context)
         {
+            context.Database.Migrate();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
