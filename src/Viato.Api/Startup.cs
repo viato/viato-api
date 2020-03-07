@@ -110,7 +110,6 @@ namespace Viato.Api
         {
             context.Database.Migrate();
 
-
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
