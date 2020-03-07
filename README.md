@@ -1,5 +1,7 @@
 # viato-api
 
+[![Build status](https://ci.appveyor.com/api/projects/status/oivxuthaj2ttnss0/branch/master?svg=true)](https://ci.appveyor.com/project/arkoc/viato-api/branch/master)
+
 ## Local-Development
 - Install [PostgreSQL 12.2](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
 - Open pgAdmin and login to localhost server
