@@ -110,15 +110,13 @@ namespace Viato.Api
         {
             context.Database.Migrate();
 
-            if (env.IsDevelopment())
+
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Viato API v1");
-                });
-            }
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Viato API v1");
+            });
 
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseHttpsRedirection();
