@@ -1,0 +1,27 @@
+version: 0.1.{build}
+
+image: Visual Studio 2019
+
+configuration: Release
+
+build_script:
+- cmd: dotnet publish -c Release src/Viato.Api/Viato.Api.csproj
+
+test_script:
+- cmd: dotnet test src/Viato.Api.UnitTests/Viato.Api.UnitTests.csproj
+
+artifacts:
+- path: '\src\Viato.Api\bin\Release\netcoreapp3.1\publish'
+  name: viato-beta-api
+  type: WebDeployPackage
+  
+deploy:
+- provider: AzureAppServiceZipDeploy
+  website: viato-api-beta
+  username: $viato-api-beta
+  password:
+    secure: QHyzHjNR2gQwj2O3RkPJ3J4DH1AkCEwQWFe0UteyYUs31P2eqbePf34OnWxrMlWRwx/I1AqnZ+J6y4TYraNdVA==
+  async_deploy: false
+  
+  on:
+    branch: master
