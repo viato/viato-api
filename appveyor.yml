@@ -13,7 +13,7 @@ test_script:
 artifacts:
 - path: '\src\Viato.Api\bin\Release\netcoreapp3.1\publish'
   name: viato-beta-api
-  type: WebDeployPackage
+  type: zip
   
 deploy:
 - provider: AzureAppServiceZipDeploy
