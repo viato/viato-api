@@ -107,6 +107,9 @@ namespace Viato.Api
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "It's default function for asp.net core and colled once.")]
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ViatoContext context)
         {
+            // https://stackoverflow.com/questions/6232633/entity-framework-timeouts
+            // https://github.com/npgsql/npgsql/issues/840
+            context.Database.SetCommandTimeout(0);
             context.Database.Migrate();
 
             app.UseDeveloperExceptionPage();
