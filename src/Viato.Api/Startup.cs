@@ -32,7 +32,7 @@ namespace Viato.Api
 
             services.AddDbContext<ViatoContext>(options =>
             {
-                options.UseNpgsql(Configuration.GetConnectionString("PostgresViatoDb"));
+                options.UseNpgsql(Configuration["DbConnectionString"]);
             });
 
             services.AddAutoMapper(typeof(Startup));
