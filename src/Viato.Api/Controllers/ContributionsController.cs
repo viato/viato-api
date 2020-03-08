@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Viato.Api.Auth;
+using Viato.Api.Models;
 
 namespace Viato.Api.Controllers
 {
@@ -13,6 +17,18 @@ namespace Viato.Api.Controllers
         public ContributionsController(ViatoContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        }
+
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyAsync(int take = 10, int skip = 0)
+        {
+            var userId = User.GetUserId();
+            var contributions = _dbContext.Contributions
+                .Where(c => c.ContributorId == userId)
+                .Skip(skip)
+                .Take(take);
+
+            return Ok(contributions);
         }
     }
 }
