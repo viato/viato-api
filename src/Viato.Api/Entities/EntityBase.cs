@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Viato.Api.Entities
 {
@@ -6,5 +7,9 @@ namespace Viato.Api.Entities
     {
         [Key]
         public long Id { get; set; }
+
+        public DateTimeOffset CreatedDate { get; set; }
+
+        public DateTimeOffset? UpdatedDate { get; set; }
     }
 }

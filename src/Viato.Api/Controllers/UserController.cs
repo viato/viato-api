@@ -200,7 +200,7 @@ namespace Viato.Api.Controllers
                 var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
                 var response = new RecoveryCodeResponseModel
                 {
-                    RecoveryCodes = recoveryCodes.ToArray(),
+                    RecoveryCodes = recoveryCodes,
                 };
 
                 return Ok(response);

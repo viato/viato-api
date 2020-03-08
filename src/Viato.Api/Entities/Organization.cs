@@ -12,6 +12,8 @@ namespace Viato.Api.Entities
 
         public string Website { get; set; }
 
+        public bool IsDnsVerified { get; set; }
+
         public OrganizationType Type { get; set; }
 
         public long AppUserId { get; set; }

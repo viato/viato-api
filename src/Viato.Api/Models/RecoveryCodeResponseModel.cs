@@ -1,7 +1,9 @@
-﻿namespace Viato.Api.Models
+﻿using System.Collections.Generic;
+
+namespace Viato.Api.Models
 {
     public class RecoveryCodeResponseModel
     {
-        public string[] RecoveryCodes { get; set; }
+        public IEnumerable<string> RecoveryCodes { get; set; }
     }
 }

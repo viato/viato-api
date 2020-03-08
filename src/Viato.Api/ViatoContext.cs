@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Viato.Api.Entities;
@@ -17,6 +19,27 @@ namespace Viato.Api
         public DbSet<Contribution> Contributions { get; set; }
 
         public DbSet<Organization> Organizations { get; set; }
+
+        public override int SaveChanges()
+        {
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e => e.Entity is EntityBase && (
+                        e.State == EntityState.Added
+                        || e.State == EntityState.Modified));
+
+            foreach (var entityEntry in entries)
+            {
+                ((EntityBase)entityEntry.Entity).UpdatedDate = DateTimeOffset.UtcNow;
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    ((EntityBase)entityEntry.Entity).CreatedDate = DateTimeOffset.UtcNow;
+                }
+            }
+
+            return base.SaveChanges();
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
