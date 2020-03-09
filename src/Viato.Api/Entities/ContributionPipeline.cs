@@ -3,21 +3,6 @@ using System.Collections.Generic;
 
 namespace Viato.Api.Entities
 {
-    public enum ContributionPipelineStatus
-    {
-        Inactive,
-        Active,
-        Suspended,
-    }
-
-    [Flags]
-    public enum ContributionPipelineTypes
-    {
-        NoLimit,
-        LimitByAmount,
-        LimitByDate,
-    }
-
     public class ContributionPipeline : EntityBase
     {
         public ContributionPipelineStatus Status { get; set; } = ContributionPipelineStatus.Inactive;
