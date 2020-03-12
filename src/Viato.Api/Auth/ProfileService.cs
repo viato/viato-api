@@ -13,7 +13,7 @@ namespace Viato.Api.Auth
     {
         private readonly IUserClaimsPrincipalFactory<AppUser> _claimsFactory;
         private readonly UserManager<AppUser> _userManager;
-        private readonly string[] _claimTypesToIncldue = new[] { "role", "email", "email_verified" };
+        private readonly string[] _claimTypesToIncldue = new[] { "email", "email_verified" };
 
         public ProfileService(UserManager<AppUser> userManager, IUserClaimsPrincipalFactory<AppUser> claimsFactory)
         {

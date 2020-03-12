@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Viato.Api.Auth;
+using Viato.Api.Entities;
 using Viato.Api.Models;
 using Viato.Api.Tor;
 
@@ -18,6 +21,7 @@ namespace Viato.Api.Controllers
             _dbContext = dbContext;
         }
 
+        [Authorize]
         [HttpGet("{pipelineId}/tor")]
         [ProducesResponseType(200, Type = typeof(List<TorModel>))]
         public async Task<IActionResult> Get([FromRoute] long pipelineId, [FromQuery] decimal amount, [FromQuery] int count = 1)
@@ -25,13 +29,24 @@ namespace Viato.Api.Controllers
             if (amount < 0)
             {
                 ModelState.AddModelError(nameof(amount), "Amount should be greater than 0");
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             var pipline = await _dbContext.ContributionPipelines.FindAsync(pipelineId);
             if (pipline == null)
             {
                 return NotFound();
+            }
+
+            if (pipline.SourceOrganizaton.AppUserId != User.GetUserId())
+            {
+                return NotFound();
+            }
+
+            if (pipline.SourceOrganizaton.Status != OrganizationStatus.Verified)
+            {
+                ModelState.AddModelError(string.Empty, "Organization should be verified in order to generate tors for pipeline.");
+                return BadRequest(ModelState);
             }
 
             var torList = new List<TorModel>();

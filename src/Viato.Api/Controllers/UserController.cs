@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Viato.Api.Auth;
 using Viato.Api.Entities;
 using Viato.Api.Models;
 using Viato.Api.Notification;
@@ -10,6 +11,7 @@ using Viato.Api.Notification;
 namespace Viato.Api.Controllers
 {
     [ApiController]
+    [AllowAnonymous]
     [Route("user")]
     public class UserController : Controller
     {
@@ -123,10 +125,11 @@ namespace Viato.Api.Controllers
         [HttpGet("two-factor")]
         public async Task<IActionResult> GetTwoFactor()
         {
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            var user = await _userManager.GetUserAsync(User);
 
             if (user.TwoFactorEnabled)
             {
+                ModelState.AddModelError(string.Empty, "2FA is already enabled for this user.");
                 return BadRequest();
             }
 
@@ -156,7 +159,8 @@ namespace Viato.Api.Controllers
 
             if (!is2faTokenValid)
             {
-                return BadRequest();
+                ModelState.AddModelError(nameof(model.Code), "Invalid 2FA code");
+                return BadRequest(ModelState);
             }
 
             var identityResult = await _userManager.SetTwoFactorEnabledAsync(user, model.Enabled);
