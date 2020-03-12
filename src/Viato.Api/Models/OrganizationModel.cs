@@ -14,6 +14,8 @@ namespace Viato.Api.Models
 
         public string Website { get; set; }
 
+        public OrganizationStatus Status { get; set; }
+
         public OrganizationType Type { get; set; }
     }
 }
