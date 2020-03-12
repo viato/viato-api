@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -84,7 +83,7 @@ namespace Viato.Api
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    options.Authority = "https://localhost:5000/";
+                    options.Authority = Configuration["Authority"];
                     options.RequireHttpsMetadata = false;
                     options.Audience = "api";
                 });

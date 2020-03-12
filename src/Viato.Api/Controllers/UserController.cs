@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Viato.Api.Auth;
 using Viato.Api.Entities;
 using Viato.Api.Models;
 using Viato.Api.Notification;
