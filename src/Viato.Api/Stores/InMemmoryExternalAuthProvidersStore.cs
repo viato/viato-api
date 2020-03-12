@@ -16,16 +16,19 @@ namespace Viato.Api.Stores
                 new ExternalAuthProvider
                 {
                     Name = "Facebook",
+                    Type = ExternalProviderType.Facebook,
                     UserInfoEndPoint = externalProviderOptions.Value.FacebookUserInfoEndpoint.ToString(),
                 },
                 new ExternalAuthProvider
                 {
                     Name = "Google",
+                    Type = ExternalProviderType.Google,
                     UserInfoEndPoint = externalProviderOptions.Value.GoogleUserInfoEndpoint.ToString(),
                 },
                 new ExternalAuthProvider
                 {
                     Name = "Twitter",
+                    Type = ExternalProviderType.Twitter,
                     UserInfoEndPoint = externalProviderOptions.Value.TwitterUserInfoEndpoint.ToString(),
                 },
             };
