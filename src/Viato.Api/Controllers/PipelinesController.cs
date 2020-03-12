@@ -7,6 +7,7 @@ using Viato.Api.Tor;
 
 namespace Viato.Api.Controllers
 {
+    [ApiController]
     [Route("pipelines")]
     public class PipelinesController : Controller
     {

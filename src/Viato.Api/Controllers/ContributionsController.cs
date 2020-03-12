@@ -6,6 +6,7 @@ using Viato.Api.Auth;
 
 namespace Viato.Api.Controllers
 {
+    [ApiController]
     [AllowAnonymous]
     [Route("contributions")]
     public class ContributionsController : Controller

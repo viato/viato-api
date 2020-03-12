@@ -5,5 +5,6 @@
         NotVerified,
         Verified,
         Rejected,
+        Suspended,
     }
 }

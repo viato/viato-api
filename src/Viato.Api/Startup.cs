@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,10 +10,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using Viato.Api.Auth;
 using Viato.Api.Entities;
 using Viato.Api.Notification;
+using Viato.Api.Services;
 using Viato.Api.Stores;
 
 namespace Viato.Api
@@ -39,6 +44,7 @@ namespace Viato.Api
             services.AddHttpClient();
             services.AddAuthServices();
             services.AddStores();
+            services.AddServices();
             services.AddSendGridEmailSender(Configuration);
 
             services.AddIdentity<AppUser, IdentityRole<long>>(options =>
@@ -88,10 +94,13 @@ namespace Viato.Api
                 .AddMvc()
                 .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+            services.AddMvc();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Viato API", Version = "v1" });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+
+                c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
                 {
                     Description = @"JWT Authorization header using the Bearer scheme.
                       Enter 'Bearer' [space] and then your token in the text input below.
@@ -101,12 +110,32 @@ namespace Viato.Api
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer",
                 });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = JwtBearerDefaults.AuthenticationScheme,
+                            },
+                        },
+                        Array.Empty<string>()
+                    },
+                });
             });
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "It's default function for asp.net core and colled once.")]
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ViatoContext context)
         {
+            if (env.IsDevelopment())
+            {
+                IdentityModelEventSource.ShowPII = true;
+            }
+
             // https://stackoverflow.com/questions/6232633/entity-framework-timeouts
             // https://github.com/npgsql/npgsql/issues/840
             context.Database.SetCommandTimeout(0);

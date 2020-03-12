@@ -12,6 +12,8 @@ namespace Viato.Api.Entities
 
         public string Website { get; set; }
 
+        public string Domain { get; set; }
+
         public OrganizationStatus Status { get; set; }
 
         public OrganizationType Type { get; set; }

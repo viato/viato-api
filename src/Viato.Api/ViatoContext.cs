@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -22,11 +24,23 @@ namespace Viato.Api
 
         public override int SaveChanges()
         {
+            AddTimestamps();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            AddTimestamps();
+            return await base.SaveChangesAsync();
+        }
+
+        protected void AddTimestamps()
+        {
             var entries = ChangeTracker
-                .Entries()
-                .Where(e => e.Entity is EntityBase && (
-                        e.State == EntityState.Added
-                        || e.State == EntityState.Modified));
+               .Entries()
+               .Where(e => e.Entity is EntityBase && (
+                       e.State == EntityState.Added
+                       || e.State == EntityState.Modified));
 
             foreach (var entityEntry in entries)
             {
@@ -37,8 +51,6 @@ namespace Viato.Api
                     ((EntityBase)entityEntry.Entity).CreatedDate = DateTimeOffset.UtcNow;
                 }
             }
-
-            return base.SaveChanges();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -53,6 +65,10 @@ namespace Viato.Api
                 .HasOne(x => x.DestinationOrganization)
                 .WithOne()
                 .HasForeignKey<ContributionPipeline>(p => p.DestinationOrganizationId);
+
+            modelBuilder.Entity<Organization>()
+                .HasIndex(x => x.Domain)
+                .IsUnique();
         }
     }
 }
