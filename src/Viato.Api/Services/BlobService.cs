@@ -15,7 +15,7 @@ namespace Viato.Api.Services
             _cloudBlobClient = cloudBlobClient ?? throw new ArgumentNullException(nameof(cloudBlobClient));
         }
 
-        public async Task UpdateOrganizationLogoAsync(Organization organization, Stream stream, string logoExtension)
+        public async Task<Uri> UploadOrganizationLogoAsync(Organization organization, Stream stream, string logoExtension)
         {
             var container = _cloudBlobClient.GetContainerReference("organizationlogos");
             await container.CreateIfNotExistsAsync();
@@ -27,7 +27,7 @@ namespace Viato.Api.Services
             var logoBlob = container.GetBlockBlobReference($"logo_{organization.Id}{logoExtension}");
 
             await logoBlob.UploadFromStreamAsync(stream);
-            organization.LogoBlobUri = logoBlob.Uri.AbsoluteUri;
+            return logoBlob.Uri;
         }
     }
 }

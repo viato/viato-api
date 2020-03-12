@@ -215,8 +215,9 @@ namespace Viato.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _blobService.UpdateOrganizationLogoAsync(organization, file.OpenReadStream(), fileExtension);
+            var logoUri = await _blobService.UploadOrganizationLogoAsync(organization, file.OpenReadStream(), fileExtension);
 
+            organization.LogoBlobUri = logoUri.AbsoluteUri;
             await _dbContext.SaveChangesAsync();
 
             return Ok(_mapper.Map<OrganizationModel>(organization));
