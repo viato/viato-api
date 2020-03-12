@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Viato.Api.Auth;
@@ -19,17 +21,23 @@ namespace Viato.Api.Controllers
     {
         private readonly ViatoContext _dbContext;
         private readonly IDnsProofService _dnsService;
+        private readonly IBlobService _blobService;
         private readonly IMapper _mapper;
+
         private readonly int _maxPageSize = 50;
+        private readonly int _maxLogoSizeInMb = 5;
+        private readonly string[] _allowedLogoExtensions = new string[] { ".jpg", ".png" };
 
         public OrganizationsController(
             ViatoContext dbContext,
             IDnsProofService dnsService,
+            IBlobService blobService,
             IMapper mapper)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _dnsService = dnsService ?? throw new ArgumentNullException(nameof(dnsService));
+            _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
@@ -51,6 +59,21 @@ namespace Viato.Api.Controllers
             }
 
             return Ok(_mapper.Map<OrganizationModel>(organization));
+        }
+
+        [Authorize]
+        [HttpGet("my")]
+        public IActionResult GetMy([FromQuery]int skip = 0, [FromQuery]int take = 10)
+        {
+            take = take > _maxPageSize ? _maxPageSize : take;
+
+            var userId = User.GetUserId();
+            var contributions = _dbContext.Organizations
+                .Where(c => c.AppUserId == userId)
+                .Skip(skip)
+                .Take(take);
+
+            return Ok(contributions);
         }
 
         [Authorize]
@@ -133,7 +156,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpPut("{id}/verify-dns")]
-        public async Task<IActionResult> VerifyDns([FromRoute]long id)
+        public async Task<IActionResult> VerifyDnsAsync([FromRoute]long id)
         {
             var organization = await _dbContext.Organizations.FindAsync(id);
             if (organization == null || organization.Status == OrganizationStatus.Suspended)
@@ -152,6 +175,47 @@ namespace Viato.Api.Controllers
             {
                 organization.Status = OrganizationStatus.Verified;
             }
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(_mapper.Map<OrganizationModel>(organization));
+        }
+
+        [Authorize]
+        [HttpPut("{id}/update-logo")]
+        public async Task<IActionResult> UpdateLogoAsync([FromRoute]long id, [FromForm]IFormFile file)
+        {
+            if (file == null)
+            {
+                ModelState.AddModelError("File", $"No file found in the request.");
+                return BadRequest(ModelState);
+            }
+
+            var organization = await _dbContext.Organizations.FindAsync(id);
+            if (organization == null || organization.Status == OrganizationStatus.Suspended)
+            {
+                return NotFound();
+            }
+
+            if (organization.AppUserId != User.GetUserId())
+            {
+                return NotFound();
+            }
+
+            var fileExtension = Path.GetExtension(file.FileName);
+            if (!_allowedLogoExtensions.Contains(fileExtension))
+            {
+                ModelState.AddModelError("File", $"Only {string.Join(",", _allowedLogoExtensions)} images are allowed.");
+                return BadRequest(ModelState);
+            }
+
+            if (file.Length / 1024 / 1024 > _maxLogoSizeInMb)
+            {
+                ModelState.AddModelError("File", $"Max logo upload size is {_maxLogoSizeInMb} mb.");
+                return BadRequest(ModelState);
+            }
+
+            await _blobService.UpdateOrganizationLogoAsync(organization, file.OpenReadStream(), fileExtension);
 
             await _dbContext.SaveChangesAsync();
 

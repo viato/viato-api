@@ -13,8 +13,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.WindowsAzure.Storage;
 using Viato.Api.Auth;
 using Viato.Api.Entities;
+using Viato.Api.Misc;
 using Viato.Api.Notification;
 using Viato.Api.Services;
 using Viato.Api.Stores;
@@ -38,6 +40,12 @@ namespace Viato.Api
             services.AddDbContext<ViatoContext>(options =>
             {
                 options.UseNpgsql(Configuration["DbConnectionString"]);
+            });
+
+            services.AddScoped(s =>
+            {
+                var storageAccount = CloudStorageAccount.Parse(Configuration["StorageConnectionString"]);
+                return storageAccount.CreateCloudBlobClient();
             });
 
             services.AddAutoMapper(typeof(Startup));
@@ -125,6 +133,8 @@ namespace Viato.Api
                         Array.Empty<string>()
                     },
                 });
+
+                c.OperationFilter<SwaggerUploadFileParametersFilter>();
             });
         }
 

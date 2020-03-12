@@ -8,7 +8,7 @@ namespace Viato.Api.Entities
 
         public string Descripiton { get; set; }
 
-        public string LogoBlobId { get; set; }
+        public string LogoBlobUri { get; set; }
 
         public string Website { get; set; }
 

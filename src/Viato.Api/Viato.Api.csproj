@@ -11,6 +11,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200305162251_ContributionPipelines.cs" />
     <Compile Remove="Migrations\20200305162251_ContributionPipelines.Designer.cs" />
+    <Compile Remove="Migrations\20200312014919_test.cs" />
+    <Compile Remove="Migrations\20200312014919_test.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,11 +34,13 @@
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
-    <PackageReference Include="Sendgrid" Version="9.12.7" />
+    <PackageReference Include="Sendgrid" Version="9.13.0" />
     <PackageReference Include="Sodium.Core" Version="1.2.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.1.0" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
 
