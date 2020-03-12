@@ -41,7 +41,12 @@ namespace Viato.Api.Controllers
         public async Task<IActionResult> GetAllAsync([FromQuery]int skip = 0, [FromQuery]int take = 10)
         {
             take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
-            var organizations = await _dbContext.Organizations.Skip(skip).Take(take).ToListAsync();
+            var organizations = await _dbContext.Organizations
+                .OrderByDescending(x => x.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
             return Ok(_mapper.Map<List<OrganizationModel>>(organizations));
         }
 
@@ -53,6 +58,7 @@ namespace Viato.Api.Controllers
 
             var userId = User.GetUserId();
             var contributions = _dbContext.Organizations
+                .OrderByDescending(x => x.Id)
                 .Where(c => c.AppUserId == userId)
                 .Skip(skip)
                 .Take(take);

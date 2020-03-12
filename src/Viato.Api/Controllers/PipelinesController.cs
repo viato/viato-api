@@ -63,6 +63,7 @@ namespace Viato.Api.Controllers
             var userId = User.GetUserId();
             var pipelines = _dbContext.ContributionPipelines
                 .Where(c => c.SourceOrganizaton.AppUserId == userId || c.DestinationOrganization.AppUserId == userId)
+                .OrderByDescending(x => x.Id)
                 .Skip(skip)
                 .Take(take);
 
@@ -79,6 +80,27 @@ namespace Viato.Api.Controllers
             }
 
             return Ok(_mapper.Map<PipelineModel>(pipeline));
+        }
+
+        [HttpGet("{id}/contributions")]
+        public async Task<IActionResult> GetContributionsAsync(
+            [FromRoute]long id,
+            [FromQuery]int skip = 0,
+            [FromQuery]int take = 10)
+        {
+            var pipeline = await _dbContext.ContributionPipelines.FindAsync(id);
+            if (pipeline == null)
+            {
+                return NotFound();
+            }
+
+            var contributions = pipeline.Contributions
+                .OrderByDescending(x => x.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToList();
+
+            return Ok(_mapper.Map<List<ContributionModel>>(contributions));
         }
 
         [Authorize]
@@ -181,9 +203,9 @@ namespace Viato.Api.Controllers
         }
 
         [Authorize]
-        [HttpGet("{pipelineId}/tor")]
+        [HttpGet("{id}/tor")]
         [ProducesResponseType(200, Type = typeof(List<TorModel>))]
-        public async Task<IActionResult> Get([FromRoute] long pipelineId, [FromQuery] decimal amount, [FromQuery] int count = 1)
+        public async Task<IActionResult> GenerateTorsAsync([FromRoute]long id, [FromQuery]decimal amount, [FromQuery]int count = 1)
         {
             if (amount < 0)
             {
@@ -197,7 +219,7 @@ namespace Viato.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var pipline = await _dbContext.ContributionPipelines.FindAsync(pipelineId);
+            var pipline = await _dbContext.ContributionPipelines.FindAsync(id);
             if (pipline == null)
             {
                 return NotFound();
