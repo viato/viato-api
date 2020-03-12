@@ -64,7 +64,7 @@ namespace Viato.Api.Controllers
             }
 
             var websiteUri = new Uri(model.Website);
-            if (!await IsUniqueWebsite(websiteUri))
+            if (await OrganizationWithSameWebsiteExistsAsync(websiteUri))
             {
                 ModelState.AddModelError(nameof(model.Website), "Website is already used for other organization.");
                 return BadRequest(ModelState);
@@ -110,7 +110,7 @@ namespace Viato.Api.Controllers
             if (new Uri(organization.Website) != new Uri(model.Website))
             {
                 var websiteUri = new Uri(model.Website);
-                if (!await IsUniqueWebsite(websiteUri))
+                if (await OrganizationWithSameWebsiteExistsAsync(websiteUri))
                 {
                     ModelState.AddModelError(nameof(model.Website), "Website is already used for other organization.");
                     return BadRequest(ModelState);
@@ -191,9 +191,9 @@ namespace Viato.Api.Controllers
             return Ok(_mapper.Map<OrganizationModel>(organization));
         }
 
-        private async Task<bool> IsUniqueWebsite(Uri website)
+        private async Task<bool> OrganizationWithSameWebsiteExistsAsync(Uri website)
         {
-            return !await _dbContext.Organizations.AnyAsync(s => s.Domain == website.DnsSafeHost);
+            return await _dbContext.Organizations.AnyAsync(s => s.Domain == website.DnsSafeHost);
         }
     }
 }
