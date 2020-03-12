@@ -8,6 +8,7 @@
 - Create Database named "viato"
 - Create DB user (with all permissions) User Id = dev, Password = ZcRcAf3vzFeZtxHG
 - In Visual Studio Open PM Console and type: update-database
+- Make sure you have [Azure storage emulator](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator) installed and running.
 
 #### Local-Development: Adding migration
 After adding/modifying any database entity please run following command from PM Console:
