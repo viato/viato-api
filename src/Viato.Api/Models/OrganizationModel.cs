@@ -6,7 +6,7 @@ namespace Viato.Api.Models
     {
         public long Id { get; set; }
 
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
 
         public string Descripiton { get; set; }
 

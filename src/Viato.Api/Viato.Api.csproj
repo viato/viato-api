@@ -13,6 +13,8 @@
     <Compile Remove="Migrations\20200305162251_ContributionPipelines.Designer.cs" />
     <Compile Remove="Migrations\20200312014919_test.cs" />
     <Compile Remove="Migrations\20200312014919_test.Designer.cs" />
+    <Compile Remove="Migrations\20200312063655_test.cs" />
+    <Compile Remove="Migrations\20200312063655_test.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Viato.Api.Auth;
 using Viato.Api.Entities;
+using Viato.Api.Misc;
 using Viato.Api.Models;
 using Viato.Api.Services;
 
@@ -23,10 +24,6 @@ namespace Viato.Api.Controllers
         private readonly IDnsProofService _dnsService;
         private readonly IBlobService _blobService;
         private readonly IMapper _mapper;
-
-        private readonly int _maxPageSize = 50;
-        private readonly int _maxLogoSizeInMb = 5;
-        private readonly string[] _allowedLogoExtensions = new string[] { ".jpg", ".png" };
 
         public OrganizationsController(
             ViatoContext dbContext,
@@ -43,9 +40,24 @@ namespace Viato.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery]int skip = 0, [FromQuery]int take = 10)
         {
-            take = take > _maxPageSize ? _maxPageSize : take;
+            take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
             var organizations = await _dbContext.Organizations.Skip(skip).Take(take).ToListAsync();
             return Ok(_mapper.Map<List<OrganizationModel>>(organizations));
+        }
+
+        [Authorize]
+        [HttpGet("my")]
+        public IActionResult GetMy([FromQuery]int skip = 0, [FromQuery]int take = 10)
+        {
+            take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
+
+            var userId = User.GetUserId();
+            var contributions = _dbContext.Organizations
+                .Where(c => c.AppUserId == userId)
+                .Skip(skip)
+                .Take(take);
+
+            return Ok(_mapper.Map<OrganizationModel>(contributions));
         }
 
         [HttpGet("{id}")]
@@ -61,19 +73,40 @@ namespace Viato.Api.Controllers
             return Ok(_mapper.Map<OrganizationModel>(organization));
         }
 
-        [Authorize]
-        [HttpGet("my")]
-        public IActionResult GetMy([FromQuery]int skip = 0, [FromQuery]int take = 10)
+        [HttpGet("{id}/pipelines")]
+        public async Task<IActionResult> GetPipelinesAsync(
+            [FromRoute]long id,
+            [FromQuery]int skip = 0,
+            [FromQuery]int take = 10,
+            [FromQuery]OrderType order = OrderType.Newest)
         {
-            take = take > _maxPageSize ? _maxPageSize : take;
+            var organization = await _dbContext.Organizations.FindAsync(id);
 
-            var userId = User.GetUserId();
-            var contributions = _dbContext.Organizations
-                .Where(c => c.AppUserId == userId)
+            if (organization == null)
+            {
+                return NotFound();
+            }
+
+            take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
+            IQueryable<ContributionPipeline> pipelinesQuery = _dbContext.ContributionPipelines
+                .Where(x => x.SourceOrganizationId == id || x.DestinationOrganizationId == id);
+
+            switch (order)
+            {
+                case OrderType.Newest:
+                    pipelinesQuery = pipelinesQuery.OrderByDescending(x => x.Id);
+                    break;
+                case OrderType.Popular:
+                    pipelinesQuery = pipelinesQuery.OrderByDescending(x => x.Contributions.Count);
+                    break;
+            }
+
+            var pipelines = await pipelinesQuery
                 .Skip(skip)
-                .Take(take);
+                .Take(take)
+                .ToListAsync();
 
-            return Ok(contributions);
+            return Ok(_mapper.Map<List<PipelineModel>>(pipelines));
         }
 
         [Authorize]
@@ -97,7 +130,7 @@ namespace Viato.Api.Controllers
             {
                 AppUserId = User.GetUserId(),
                 Descripiton = model.Descripiton,
-                Name = model.Name,
+                DisplayName = model.DisplayName,
                 Type = model.OrganizationType.Value,
                 Status = OrganizationStatus.NotVerified,
                 Website = model.Website.ToString(),
@@ -127,7 +160,7 @@ namespace Viato.Api.Controllers
                 return NotFound();
             }
 
-            organization.Name = model.Name;
+            organization.DisplayName = model.DisplayName;
             organization.Descripiton = model.Descripiton;
 
             if (new Uri(organization.Website) != new Uri(model.Website))
@@ -144,7 +177,7 @@ namespace Viato.Api.Controllers
                 organization.Status = OrganizationStatus.NotVerified;
             }
 
-            if (model.OrganizationType != null && !organization.ContributionPiplines.Any())
+            if (model.OrganizationType != null && !organization.ContributionPipelines.Any())
             {
                 organization.Type = model.OrganizationType.Value;
             }
@@ -203,15 +236,15 @@ namespace Viato.Api.Controllers
             }
 
             var fileExtension = Path.GetExtension(file.FileName);
-            if (!_allowedLogoExtensions.Contains(fileExtension))
+            if (!Constants.AllowedLogoExtensions.Contains(fileExtension))
             {
-                ModelState.AddModelError("File", $"Only {string.Join(",", _allowedLogoExtensions)} images are allowed.");
+                ModelState.AddModelError("File", $"Only {string.Join(",", Constants.AllowedLogoExtensions)} images are allowed.");
                 return BadRequest(ModelState);
             }
 
-            if (file.Length / 1024 / 1024 > _maxLogoSizeInMb)
+            if (file.Length / 1024 / 1024 > Constants.MaxLogoSizeInMb)
             {
-                ModelState.AddModelError("File", $"Max logo upload size is {_maxLogoSizeInMb} mb.");
+                ModelState.AddModelError("File", $"Max logo upload size is {Constants.MaxLogoSizeInMb} mb.");
                 return BadRequest(ModelState);
             }
 
@@ -245,13 +278,13 @@ namespace Viato.Api.Controllers
             if (!pipelines.Any())
             {
                 _dbContext.Organizations.Remove(organization);
-                await _dbContext.SaveChangesAsync();
             }
             else if (pipelines.SelectMany(p => p.Contributions).Count() > 0)
             {
                 organization.Status = OrganizationStatus.Suspended;
-                await _dbContext.SaveChangesAsync();
             }
+
+            await _dbContext.SaveChangesAsync();
 
             return Ok(_mapper.Map<OrganizationModel>(organization));
         }

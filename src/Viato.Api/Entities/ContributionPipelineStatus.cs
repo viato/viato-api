@@ -4,6 +4,7 @@
     {
         Inactive,
         Active,
+        Finished,
         Suspended,
     }
 }

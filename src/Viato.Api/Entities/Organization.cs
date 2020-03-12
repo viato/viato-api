@@ -4,7 +4,7 @@ namespace Viato.Api.Entities
 {
     public class Organization : EntityBase
     {
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
 
         public string Descripiton { get; set; }
 
@@ -22,6 +22,6 @@ namespace Viato.Api.Entities
 
         public virtual AppUser AppUser { get; set; }
 
-        public virtual List<ContributionPipeline> ContributionPiplines { get; set; } = new List<ContributionPipeline>();
+        public virtual List<ContributionPipeline> ContributionPipelines { get; set; } = new List<ContributionPipeline>();
     }
 }

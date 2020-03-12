@@ -6,7 +6,7 @@ namespace Viato.Api.Models
     public class CreateOrUpdateOrganizationModel
     {
         [Required]
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
 
         public OrganizationType? OrganizationType { get; set; }
 
