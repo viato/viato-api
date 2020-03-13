@@ -10,6 +10,7 @@ namespace Viato.Api.Misc
         {
             CreateMap<Organization, OrganizationModel>();
             CreateMap<ContributionPipeline, PipelineModel>();
+            CreateMap<Post, PostModel>();
 
             // TODO: write custom mapping, for private contrs and joining contribution proofs
             CreateMap<Contribution, ContributionModel>();

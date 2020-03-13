@@ -34,5 +34,7 @@ namespace Viato.Api.Entities
         public virtual Organization DestinationOrganization { get; set; }
 
         public virtual List<Contribution> Contributions { get; set; } = new List<Contribution>();
+
+        public virtual List<Post> Posts { get; set; } = new List<Post>();
     }
 }

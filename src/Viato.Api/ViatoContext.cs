@@ -18,6 +18,8 @@ namespace Viato.Api
 
         public DbSet<ContributionPipeline> ContributionPipelines { get; set; }
 
+        public DbSet<Post> Posts { get; set; }
+
         public DbSet<Contribution> Contributions { get; set; }
 
         public DbSet<Organization> Organizations { get; set; }

@@ -103,6 +103,32 @@ namespace Viato.Api.Controllers
             return Ok(_mapper.Map<List<ContributionModel>>(contributions));
         }
 
+        [HttpGet("{id}/posts")]
+        public async Task<IActionResult> GetAllAsync(
+            [FromRoute]long id,
+            [FromQuery]int skip = 0,
+            [FromQuery]int take = 10)
+        {
+            take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
+
+            var pipeline = await _dbContext.ContributionPipelines.FindAsync(id);
+            if (pipeline == null)
+            {
+                return NotFound();
+            }
+
+            IEnumerable<Post> posts = pipeline.Posts;
+
+            if (User.TryGetUserId(out long userId))
+            {
+                posts = posts.Where(p => p.AuthorOrganization.AppUserId == userId || p.Status == PostStatus.Published);
+            }
+
+            posts = posts.OrderByDescending(p => p.Id).Skip(skip).Take(take);
+
+            return Ok(_mapper.Map<List<PostModel>>(posts));
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody]CreatePipelineModel model)
