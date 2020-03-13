@@ -3,7 +3,7 @@
     public sealed class Constants
     {
         public const int MaxPageSize = 50;
-        public const int MaxLogoSizeInMb = 5;
-        public static readonly string[] AllowedLogoExtensions = { ".jpg", ".png" };
+        public const int MaxImageSizeInMb = 5;
+        public static readonly string[] AllowedImageExtensions = { ".jpg", ".png" };
     }
 }

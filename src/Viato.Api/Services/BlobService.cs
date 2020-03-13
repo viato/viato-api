@@ -29,5 +29,20 @@ namespace Viato.Api.Services
             await logoBlob.UploadFromStreamAsync(stream);
             return logoBlob.Uri;
         }
+
+        public async Task<Uri> UploadPostCoverImageAsync(Post post, Stream stream, string logoExtension)
+        {
+            var container = _cloudBlobClient.GetContainerReference("postcoverimages");
+            await container.CreateIfNotExistsAsync();
+            await container.SetPermissionsAsync(new BlobContainerPermissions()
+            {
+                PublicAccess = BlobContainerPublicAccessType.Blob,
+            });
+
+            var logoBlob = container.GetBlockBlobReference($"image_{post.Id}{logoExtension}");
+
+            await logoBlob.UploadFromStreamAsync(stream);
+            return logoBlob.Uri;
+        }
     }
 }

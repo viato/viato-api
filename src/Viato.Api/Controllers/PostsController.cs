@@ -1,11 +1,17 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Viato.Api.Auth;
 using Viato.Api.Entities;
+using Viato.Api.Misc;
 using Viato.Api.Models;
+using Viato.Api.Services;
 
 namespace Viato.Api.Controllers
 {
@@ -14,11 +20,19 @@ namespace Viato.Api.Controllers
     public class PostsController : ControllerBase
     {
         private readonly ViatoContext _dbContext;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IBlobService _blobService;
         private readonly IMapper _mapper;
 
-        public PostsController(ViatoContext dbContext, IMapper mapper)
+        public PostsController(
+            ViatoContext dbContext,
+            UserManager<AppUser> userManager,
+            IBlobService blobService,
+            IMapper mapper)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _blobService = blobService ?? throw new ArgumentNullException(nameof(blobService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -86,6 +100,12 @@ namespace Viato.Api.Controllers
                 return NotFound();
             }
 
+            var user = await _userManager.GetUserAsync(User);
+            if (!user.Organizations.Any(o => o.Id == post.AuthorOrganizationId))
+            {
+                return StatusCode(401);
+            }
+
             post.Body = model.Body;
             post.Status = model.Status;
             post.Title = model.Title;
@@ -93,6 +113,49 @@ namespace Viato.Api.Controllers
             await _dbContext.SaveChangesAsync();
 
             return Ok(post);
+        }
+
+        [Authorize]
+        [HttpPut("{id}/update-image")]
+        public async Task<IActionResult> UpdateLogoAsync([FromRoute]long id, [FromForm]IFormFile file)
+        {
+            if (file == null)
+            {
+                ModelState.AddModelError("File", $"No file found in the request.");
+                return BadRequest(ModelState);
+            }
+
+            var post = await _dbContext.Posts.FindAsync(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (!user.Organizations.Any(o => o.Id == post.AuthorOrganizationId))
+            {
+                return StatusCode(401);
+            }
+
+            var fileExtension = Path.GetExtension(file.FileName);
+            if (!Constants.AllowedImageExtensions.Contains(fileExtension))
+            {
+                ModelState.AddModelError("File", $"Only {string.Join(",", Constants.AllowedImageExtensions)} images are allowed.");
+                return BadRequest(ModelState);
+            }
+
+            if (file.Length / 1024 / 1024 > Constants.MaxImageSizeInMb)
+            {
+                ModelState.AddModelError("File", $"Max image upload size is {Constants.MaxImageSizeInMb} mb.");
+                return BadRequest(ModelState);
+            }
+
+            var imageUir = await _blobService.UploadPostCoverImageAsync(post, file.OpenReadStream(), fileExtension);
+
+            post.ImageBlobUri = imageUir.AbsoluteUri;
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(_mapper.Map<PostModel>(post));
         }
 
         [Authorize]

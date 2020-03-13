@@ -8,5 +8,7 @@ namespace Viato.Api.Services
     public interface IBlobService
     {
         Task<Uri> UploadOrganizationLogoAsync(Organization organization, Stream stream, string logoExtension);
+
+        Task<Uri> UploadPostCoverImageAsync(Post post, Stream stream, string logoExtension);
     }
 }

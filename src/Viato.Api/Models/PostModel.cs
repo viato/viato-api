@@ -12,6 +12,8 @@ namespace Viato.Api.Models
 
         public string Body { get; set; }
 
+        public string ImageBlobUri { get; set; }
+
         public long AuthorOrganizationId { get; set; }
 
         public long ContributionPipelineId { get; set; }

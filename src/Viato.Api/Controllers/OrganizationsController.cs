@@ -242,15 +242,15 @@ namespace Viato.Api.Controllers
             }
 
             var fileExtension = Path.GetExtension(file.FileName);
-            if (!Constants.AllowedLogoExtensions.Contains(fileExtension))
+            if (!Constants.AllowedImageExtensions.Contains(fileExtension))
             {
-                ModelState.AddModelError("File", $"Only {string.Join(",", Constants.AllowedLogoExtensions)} images are allowed.");
+                ModelState.AddModelError("File", $"Only {string.Join(",", Constants.AllowedImageExtensions)} images are allowed.");
                 return BadRequest(ModelState);
             }
 
-            if (file.Length / 1024 / 1024 > Constants.MaxLogoSizeInMb)
+            if (file.Length / 1024 / 1024 > Constants.MaxImageSizeInMb)
             {
-                ModelState.AddModelError("File", $"Max logo upload size is {Constants.MaxLogoSizeInMb} mb.");
+                ModelState.AddModelError("File", $"Max logo upload size is {Constants.MaxImageSizeInMb} mb.");
                 return BadRequest(ModelState);
             }
 

@@ -12,6 +12,8 @@
 
         public string Body { get; set; }
 
+        public string ImageBlobUri { get; set; }
+
         public virtual Organization AuthorOrganization { get; set; }
 
         public virtual ContributionPipeline ContributionPipeline { get; set; }
