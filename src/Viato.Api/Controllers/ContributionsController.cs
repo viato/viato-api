@@ -70,7 +70,7 @@ namespace Viato.Api.Controllers
             return Ok(_mapper.Map<ContributionModel>(contribution));
         }
 
-        [HttpGet("tor")]
+        [HttpGet("scan-tor")]
         public async Task<IActionResult> ScanAsync([FromQuery]string token)
         {
             if (string.IsNullOrWhiteSpace(token))
