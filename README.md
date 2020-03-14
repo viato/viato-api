@@ -49,7 +49,7 @@ For any model realted error we use default `ModelState` of `Controller`. For any
 All custom http errors should be defined in [AppHttpErrors.cs](https://github.com/viato/viato-api/blob/master/src/Viato.Api/AppHttpErrors.cs) file.
 
 ## Acknowledgements
-viato-api is built using the following great open source projects and free services:
+viato-api is built using the following great open source projects:
 
 * [ASP.NET Core](https://github.com/aspnet)
 * [IdentityServer4](https://github.com/IdentityServer/IdentityServer4)
@@ -59,5 +59,5 @@ viato-api is built using the following great open source projects and free servi
 * [DnsClient](https://github.com/MichaCo/DnsClient.NET)
 * [XUnit](https://github.com/xunit/xunit)
 
-..and last but not least all our [contributors](https://github.com/viato/viato-api/graphs/contributors)!
+..by our [contributors](https://github.com/viato/viato-api/graphs/contributors)!
 
