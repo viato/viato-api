@@ -27,3 +27,23 @@ viato-api is mainly using [DotNet Coding Conventions](https://docs.microsoft.com
 Except few things, like we name private fields with underscore like: `_dbContext` and we don't use `this.` qualifier. (This behavior is controlled by analyzers, and in case of not matching code, they will raise build warning. )
 
 We have adopted main [StyleCop Rules](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/DOCUMENTATION.md) and we are using [Style Cop DotNet analyzer](https://github.com/DotNetAnalyzers/StyleCopAnalyzers), that will react if something doesn't match to our standards.
+
+
+## Coding Conventions
+
+#### Error Handling
+
+For any model realted error we use default `ModelState` of `Controller`. For any custom error not related to model we use customer http status codes, for example:
+
+```
+  public sealed class AppHttpErrors
+  {
+      public const int TorPipelineNotFound = 441;
+      public const int TorPipelineIsNotAcitve = 442;
+      public const int TorOrganizationNotVerified = 443;
+      ...
+      public const int User2FAAlreadyEnabled = 451;
+  }
+```
+
+All custom http errors should be defined in [AppHttpErrors.cs](https://github.com/viato/viato-api/blob/master/src/Viato.Api/AppHttpErrors.cs) file.
