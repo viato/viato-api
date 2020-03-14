@@ -29,7 +29,7 @@ Except few things, like we name private fields with underscore like: `_dbContext
 We have adopted main [StyleCop Rules](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/DOCUMENTATION.md) and we are using [Style Cop DotNet analyzer](https://github.com/DotNetAnalyzers/StyleCopAnalyzers), that will react if something doesn't match to our standards.
 
 
-## Coding Conventions
+## API Conventions
 
 #### Error Handling
 
