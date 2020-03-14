@@ -139,8 +139,7 @@ namespace Viato.Api.Controllers
 
             if (user.TwoFactorEnabled)
             {
-                ModelState.AddModelError(string.Empty, "2FA is already enabled for this user.");
-                return BadRequest();
+                return StatusCode(AppHttpErrors.User2FAAlreadyEnabled);
             }
 
             var code = await _userManager.GetAuthenticatorKeyAsync(user);

@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Viato.Api.Auth;
+using Viato.Api.Entities;
 using Viato.Api.Misc;
 using Viato.Api.Models;
+using Viato.Api.Tor;
 
 namespace Viato.Api.Controllers
 {
@@ -66,6 +68,64 @@ namespace Viato.Api.Controllers
             }
 
             return Ok(_mapper.Map<ContributionModel>(contribution));
+        }
+
+        [HttpGet("tor")]
+        public async Task<IActionResult> ScanAsync([FromQuery]string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                ModelState.AddModelError(nameof(token), "Tor token is required.");
+                return BadRequest(ModelState);
+            }
+
+            if (!TorToken.TryParse(token, out TorToken torToken))
+            {
+                ModelState.AddModelError(nameof(token), "Tor token is in invalid format.");
+                return BadRequest(ModelState);
+            }
+
+            var pipeline = await _dbContext.ContributionPipelines.FindAsync(torToken.PipelineId);
+            if (pipeline == null)
+            {
+                return StatusCode(AppHttpErrors.TorPipelineNotFound);
+            }
+
+            if (pipeline.Status != ContributionPipelineStatus.Active)
+            {
+                return StatusCode(AppHttpErrors.TorPipelineIsNotAcitve);
+            }
+
+            var contribution = new Contribution()
+            {
+                Amount = torToken.Amount,
+                ContributionPipelineId = pipeline.Id,
+                TorTokenId = torToken.Id.ToString(),
+                TorToken = token,
+            };
+
+            StagedContribution stagedContribution = null;
+
+            if (User.TryGetUserId(out long userId))
+            {
+                contribution.ContributorId = userId;
+            }
+            else
+            {
+                stagedContribution = new StagedContribution()
+                {
+                    ContributionId = contribution.Id,
+                };
+                _dbContext.StagedContributions.Add(stagedContribution);
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new ScanTorResultModel()
+            {
+                Contribution = _mapper.Map<ContributionModel>(contribution),
+                StagedContributionId = stagedContribution?.Id.ToString(),
+            });
         }
     }
 }

@@ -258,8 +258,7 @@ namespace Viato.Api.Controllers
 
             if (pipline.SourceOrganizaton.Status != OrganizationStatus.Verified)
             {
-                ModelState.AddModelError(string.Empty, "Organization should be verified in order to generate tors for pipeline.");
-                return BadRequest(ModelState);
+                return StatusCode(AppHttpErrors.TorOrganizationNotVerified);
             }
 
             var torList = new List<TorModel>();
@@ -267,8 +266,7 @@ namespace Viato.Api.Controllers
             {
                 var tor = new TorToken(
                     Guid.NewGuid(),
-                    pipline.SourceOrganizationId,
-                    pipline.DestinationOrganizationId,
+                    pipline.Id,
                     amount);
 
                 var torToken = tor.Protect(pipline.OwnerPrivateKey.HexToByteArray());

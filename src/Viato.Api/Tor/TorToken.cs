@@ -9,23 +9,19 @@ namespace Viato.Api.Tor
 
         public TorToken(
             Guid id,
-            long sourceOrgId,
-            long destinationOrgId,
+            long pipelineId,
             decimal amount,
             string signature = null)
         {
             Id = id;
-            SourceOrgId = sourceOrgId;
-            DestinationOrgId = destinationOrgId;
+            PipelineId = pipelineId;
             Amount = amount;
             Signature = signature;
         }
 
         public Guid Id { get; private set; }
 
-        public long SourceOrgId { get; private set; }
-
-        public long DestinationOrgId { get; private set; }
+        public long PipelineId { get; private set; }
 
         public decimal Amount { get; private set; }
 
@@ -43,9 +39,25 @@ namespace Viato.Api.Tor
             return new TorToken(
                 Guid.Parse(tokenArray[0]),
                 long.Parse(tokenArray[1]),
-                long.Parse(tokenArray[2]),
-                decimal.Parse(tokenArray[3]),
-                tokenArray[4]);
+                decimal.Parse(tokenArray[2]),
+                tokenArray[3]);
+        }
+
+        public static bool TryParse(string token, out TorToken torToken)
+        {
+            torToken = default;
+
+            try
+            {
+                torToken = Parse(token);
+                return true;
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch
+            {
+                return false;
+            }
+#pragma warning restore CA1031 // Do not catch general exception types
         }
 
         public bool Verify(byte[] pubKey)
@@ -66,7 +78,7 @@ namespace Viato.Api.Tor
 
         private string GetTokenPayload()
         {
-            return $"{Id}{_sep}{SourceOrgId}{_sep}{DestinationOrgId}{_sep}{Amount}";
+            return $"{Id}{_sep}{PipelineId}{_sep}{Amount}";
         }
     }
 }
