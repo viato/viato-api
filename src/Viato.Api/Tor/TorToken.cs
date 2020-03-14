@@ -31,7 +31,7 @@ namespace Viato.Api.Tor
         {
             token = Encoding.UTF8.GetString(Convert.FromBase64String(token));
             var tokenArray = token.Split(_sep);
-            if (tokenArray.Length != 5)
+            if (tokenArray.Length != 4)
             {
                 throw new FormatException("Token has invalid format: it should be devided to 4 pieces.");
             }
