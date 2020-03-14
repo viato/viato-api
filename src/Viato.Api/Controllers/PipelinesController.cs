@@ -229,7 +229,7 @@ namespace Viato.Api.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id}/tor")]
+        [HttpGet("{id}/generate-tor")]
         [ProducesResponseType(200, Type = typeof(List<TorModel>))]
         public async Task<IActionResult> GenerateTorsAsync([FromRoute]long id, [FromQuery]decimal amount, [FromQuery]int count = 1)
         {
