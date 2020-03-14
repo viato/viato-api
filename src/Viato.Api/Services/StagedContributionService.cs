@@ -24,6 +24,8 @@ namespace Viato.Api.Services
                     contribution.ContributorId = user.Id;
                     contribution.IsPrivate = false;
 
+                    _dbContext.StagedContributions.Remove(stagedContribution);
+
                     await _dbContext.SaveChangesAsync();
                 }
             }
