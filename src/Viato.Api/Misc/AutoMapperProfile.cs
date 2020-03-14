@@ -12,8 +12,9 @@ namespace Viato.Api.Misc
             CreateMap<ContributionPipeline, PipelineModel>();
             CreateMap<Post, PostModel>();
 
-            // TODO: write custom mapping, for private contrs and joining contribution proofs
-            CreateMap<Contribution, ContributionModel>();
+            CreateMap<ContributionProof, ContributionProofModel>();
+            CreateMap<Contribution, ContributionModel>()
+                .ForMember(m => m.ContributorId, opt => opt.MapFrom(src => src.IsPrivate ? null : src.ContributorId));
         }
     }
 }

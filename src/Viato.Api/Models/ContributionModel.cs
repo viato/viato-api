@@ -1,6 +1,4 @@
-﻿using Viato.Api.Entities;
-
-namespace Viato.Api.Models
+﻿namespace Viato.Api.Models
 {
     public class ContributionModel
     {
@@ -14,10 +12,6 @@ namespace Viato.Api.Models
 
         public string TorTokenId { get; set; }
 
-        public ContributionProofStatus ProofStatus { get; set; }
-
-        public string ProofNetwork { get; set; }
-
-        public string BlockchainTransactionId { get; set; }
+        public ContributionProofModel Proof { get; set; }
     }
 }
