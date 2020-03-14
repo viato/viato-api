@@ -8,6 +8,7 @@ namespace Viato.Api.Services
         {
             services.AddTransient<IDnsProofService, DnsProofService>();
             services.AddTransient<IBlobService, BlobService>();
+            services.AddTransient<IStagedContributionService, StagedContributionService>();
             return services;
         }
     }

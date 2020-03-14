@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Viato.Api.Entities;
 using Viato.Api.Models;
 using Viato.Api.Notification;
+using Viato.Api.Services;
 
 namespace Viato.Api.Controllers
 {
@@ -16,11 +17,16 @@ namespace Viato.Api.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly IStagedContributionService _stagedContributionService;
 
-        public UserController(UserManager<AppUser> userManager, IEmailSender emailSender)
+        public UserController(
+            UserManager<AppUser> userManager,
+            IEmailSender emailSender,
+            IStagedContributionService stagedContributionService)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
+            _stagedContributionService = stagedContributionService ?? throw new ArgumentNullException(nameof(stagedContributionService));
         }
 
         [HttpPost("register")]
@@ -50,6 +56,11 @@ namespace Viato.Api.Controllers
                     user.Email,
                     "Confirm Email",
                     $"Verification code {code}");
+
+            if (Guid.TryParse(model.StagedContributionId, out Guid stagedContributionId))
+            {
+                await _stagedContributionService.AttachStagedContributionAsync(stagedContributionId, user);
+            }
 
             return Ok(new RegisterResponseModel()
             {
