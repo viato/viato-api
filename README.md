@@ -29,7 +29,7 @@ Except few things, like we name private fields with underscore like: `_dbContext
 We have adopted main [StyleCop Rules](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/DOCUMENTATION.md) and we are using [Style Cop DotNet analyzer](https://github.com/DotNetAnalyzers/StyleCopAnalyzers), that will react if something doesn't match to our standards.
 
 
-## Coding Conventions
+## API Conventions
 
 #### Error Handling
 
@@ -47,3 +47,17 @@ For any model realted error we use default `ModelState` of `Controller`. For any
 ```
 
 All custom http errors should be defined in [AppHttpErrors.cs](https://github.com/viato/viato-api/blob/master/src/Viato.Api/AppHttpErrors.cs) file.
+
+## Acknowledgements
+viato-api is built using the following great open source projects:
+
+* [ASP.NET Core](https://github.com/aspnet)
+* [IdentityServer4](https://github.com/IdentityServer/IdentityServer4)
+* [EntityFrameworkCore](https://github.com/dotnet/efcore)
+* [Npgsql.EntityFrameworkCore.PostgreSQL](https://github.com/npgsql/efcore.pg)
+* [AutoMapper](https://github.com/AutoMapper/AutoMapper)
+* [DnsClient](https://github.com/MichaCo/DnsClient.NET)
+* [XUnit](https://github.com/xunit/xunit)
+
+..by our [contributors](https://github.com/viato/viato-api/graphs/contributors)!
+
