@@ -55,6 +55,8 @@ namespace Viato.Api.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(nullable: false),
                     Status = table.Column<int>(nullable: false),
                     Network = table.Column<string>(nullable: true),
                     BlockchainTransactionId = table.Column<string>(nullable: true),
@@ -62,6 +64,20 @@ namespace Viato.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ContributionProof", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StagedContributions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(nullable: false),
+                    ContributionId = table.Column<long>(nullable: false),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StagedContributions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -176,10 +192,14 @@ namespace Viato.Api.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(nullable: false),
+                    DisplayName = table.Column<string>(nullable: true),
                     Descripiton = table.Column<string>(nullable: true),
-                    LogoBlobId = table.Column<string>(nullable: true),
+                    LogoBlobUri = table.Column<string>(nullable: true),
                     Website = table.Column<string>(nullable: true),
+                    Domain = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
                     Type = table.Column<int>(nullable: false),
                     AppUserId = table.Column<long>(nullable: false),
                 },
@@ -200,8 +220,12 @@ namespace Viato.Api.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(nullable: false),
                     Status = table.Column<int>(nullable: false),
                     Types = table.Column<int>(nullable: false),
+                    DisplayName = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     SourceOrganizationId = table.Column<long>(nullable: false),
                     DestinationOrganizationId = table.Column<long>(nullable: false),
                     ContributionCurrency = table.Column<string>(nullable: true),
@@ -241,12 +265,14 @@ namespace Viato.Api.Migrations
                 {
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(nullable: false),
                     ContributionPipelineId = table.Column<long>(nullable: false),
-                    ContributorId = table.Column<long>(nullable: false),
+                    ContributorId = table.Column<long>(nullable: true),
                     Amount = table.Column<decimal>(nullable: false),
                     TorTokenId = table.Column<string>(nullable: true),
                     TorToken = table.Column<string>(nullable: true),
-                    ContributionProofId = table.Column<long>(nullable: false),
+                    ContributionProofId = table.Column<long>(nullable: true),
                     IsPrivate = table.Column<bool>(nullable: false),
                 },
                 constraints: table =>
@@ -263,11 +289,43 @@ namespace Viato.Api.Migrations
                         column: x => x.ContributionProofId,
                         principalTable: "ContributionProof",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Contributions_AspNetUsers_ContributorId",
                         column: x => x.ContributorId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CreatedDate = table.Column<DateTimeOffset>(nullable: false),
+                    UpdatedDate = table.Column<DateTimeOffset>(nullable: false),
+                    ContributionPipelineId = table.Column<long>(nullable: false),
+                    AuthorOrganizationId = table.Column<long>(nullable: false),
+                    Status = table.Column<int>(nullable: false),
+                    Title = table.Column<string>(nullable: true),
+                    Body = table.Column<string>(nullable: true),
+                    ImageBlobUri = table.Column<string>(nullable: true),
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_Organizations_AuthorOrganizationId",
+                        column: x => x.AuthorOrganizationId,
+                        principalTable: "Organizations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Posts_ContributionPipelines_ContributionPipelineId",
+                        column: x => x.ContributionPipelineId,
+                        principalTable: "ContributionPipelines",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -345,6 +403,22 @@ namespace Viato.Api.Migrations
                 name: "IX_Organizations_AppUserId",
                 table: "Organizations",
                 column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Organizations_Domain",
+                table: "Organizations",
+                column: "Domain",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_AuthorOrganizationId",
+                table: "Posts",
+                column: "AuthorOrganizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_ContributionPipelineId",
+                table: "Posts",
+                column: "ContributionPipelineId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -368,13 +442,19 @@ namespace Viato.Api.Migrations
                 name: "Contributions");
 
             migrationBuilder.DropTable(
+                name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "StagedContributions");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "ContributionPipelines");
+                name: "ContributionProof");
 
             migrationBuilder.DropTable(
-                name: "ContributionProof");
+                name: "ContributionPipelines");
 
             migrationBuilder.DropTable(
                 name: "Organizations");

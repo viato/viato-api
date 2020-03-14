@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Viato.Api.Entities
 {
-    public class ContributionPipeline : EntityBase
+    public class ContributionPipeline : EntityBase<long>
     {
         public ContributionPipelineStatus Status { get; set; } = ContributionPipelineStatus.Inactive;
 

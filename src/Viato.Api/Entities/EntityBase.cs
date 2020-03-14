@@ -1,15 +1,10 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Viato.Api.Entities
 {
-    public abstract class EntityBase
+    public abstract class EntityBase<TKey> : AuditableEntityBase
     {
         [Key]
-        public long Id { get; set; }
-
-        public DateTimeOffset CreatedDate { get; set; }
-
-        public DateTimeOffset? UpdatedDate { get; set; }
+        public TKey Id { get; set; }
     }
 }

@@ -24,6 +24,8 @@ namespace Viato.Api
 
         public DbSet<Organization> Organizations { get; set; }
 
+        public DbSet<StagedContribution> StagedContributions { get; set; }
+
         public override int SaveChanges()
         {
             AddTimestamps();
@@ -40,17 +42,17 @@ namespace Viato.Api
         {
             var entries = ChangeTracker
                .Entries()
-               .Where(e => e.Entity is EntityBase && (
+               .Where(e => e.Entity is AuditableEntityBase && (
                        e.State == EntityState.Added
                        || e.State == EntityState.Modified));
 
             foreach (var entityEntry in entries)
             {
-                ((EntityBase)entityEntry.Entity).UpdatedDate = DateTimeOffset.UtcNow;
+                ((AuditableEntityBase)entityEntry.Entity).UpdatedDate = DateTimeOffset.UtcNow;
 
                 if (entityEntry.State == EntityState.Added)
                 {
-                    ((EntityBase)entityEntry.Entity).CreatedDate = DateTimeOffset.UtcNow;
+                    ((AuditableEntityBase)entityEntry.Entity).CreatedDate = DateTimeOffset.UtcNow;
                 }
             }
         }

@@ -1,6 +1,6 @@
 ﻿namespace Viato.Api.Entities
 {
-    public class Post : EntityBase
+    public class Post : EntityBase<long>
     {
         public long ContributionPipelineId { get; set; }
 

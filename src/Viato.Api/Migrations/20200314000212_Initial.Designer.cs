@@ -10,8 +10,8 @@ using Viato.Api;
 namespace Viato.Api.Migrations
 {
     [DbContext(typeof(ViatoContext))]
-    [Migration("20200309181829_AddOrganizationStatus")]
-    partial class AddOrganizationStatus
+    [Migration("20200314000212_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -229,10 +229,10 @@ namespace Viato.Api.Migrations
                     b.Property<long>("ContributionPipelineId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ContributionProofId")
+                    b.Property<long?>("ContributionProofId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ContributorId")
+                    b.Property<long?>("ContributorId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("CreatedDate")
@@ -247,7 +247,7 @@ namespace Viato.Api.Migrations
                     b.Property<string>("TorTokenId")
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset?>("UpdatedDate")
+                    b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -283,10 +283,13 @@ namespace Viato.Api.Migrations
                     b.Property<DateTimeOffset?>("DateLimit")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<long>("DestinationOrganizationId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("ImageBlobId")
+                    b.Property<string>("DisplayName")
                         .HasColumnType("text");
 
                     b.Property<long?>("OrganizationId")
@@ -307,7 +310,7 @@ namespace Viato.Api.Migrations
                     b.Property<int>("Types")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset?>("UpdatedDate")
+                    b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -342,7 +345,7 @@ namespace Viato.Api.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset?>("UpdatedDate")
+                    b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -366,10 +369,13 @@ namespace Viato.Api.Migrations
                     b.Property<string>("Descripiton")
                         .HasColumnType("text");
 
-                    b.Property<string>("LogoBlobId")
+                    b.Property<string>("DisplayName")
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Domain")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LogoBlobUri")
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
@@ -378,7 +384,7 @@ namespace Viato.Api.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset?>("UpdatedDate")
+                    b.Property<DateTimeOffset>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Website")
@@ -388,7 +394,70 @@ namespace Viato.Api.Migrations
 
                     b.HasIndex("AppUserId");
 
+                    b.HasIndex("Domain")
+                        .IsUnique();
+
                     b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("Viato.Api.Entities.Post", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<long>("AuthorOrganizationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
+
+                    b.Property<long>("ContributionPipelineId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ImageBlobUri")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorOrganizationId");
+
+                    b.HasIndex("ContributionPipelineId");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Viato.Api.Entities.StagedContribution", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("ContributionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StagedContributions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -452,15 +521,11 @@ namespace Viato.Api.Migrations
 
                     b.HasOne("Viato.Api.Entities.ContributionProof", "ContributionProof")
                         .WithMany("Contributions")
-                        .HasForeignKey("ContributionProofId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContributionProofId");
 
                     b.HasOne("Viato.Api.Entities.AppUser", "Contributor")
                         .WithMany()
-                        .HasForeignKey("ContributorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContributorId");
                 });
 
             modelBuilder.Entity("Viato.Api.Entities.ContributionPipeline", b =>
@@ -472,7 +537,7 @@ namespace Viato.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("Viato.Api.Entities.Organization", null)
-                        .WithMany("ContributionPiplines")
+                        .WithMany("ContributionPipelines")
                         .HasForeignKey("OrganizationId");
 
                     b.HasOne("Viato.Api.Entities.Organization", "SourceOrganizaton")
@@ -487,6 +552,21 @@ namespace Viato.Api.Migrations
                     b.HasOne("Viato.Api.Entities.AppUser", "AppUser")
                         .WithMany("Organizations")
                         .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Viato.Api.Entities.Post", b =>
+                {
+                    b.HasOne("Viato.Api.Entities.Organization", "AuthorOrganization")
+                        .WithMany()
+                        .HasForeignKey("AuthorOrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Viato.Api.Entities.ContributionPipeline", "ContributionPipeline")
+                        .WithMany("Posts")
+                        .HasForeignKey("ContributionPipelineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

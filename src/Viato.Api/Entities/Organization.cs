@@ -2,7 +2,7 @@
 
 namespace Viato.Api.Entities
 {
-    public class Organization : EntityBase
+    public class Organization : EntityBase<long>
     {
         public string DisplayName { get; set; }
 

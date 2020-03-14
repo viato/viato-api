@@ -2,14 +2,7 @@
 
 namespace Viato.Api.Entities
 {
-    public enum ContributionProofStatus
-    {
-        NotPublished,
-        Published,
-        Succeeded,
-    }
-
-    public class ContributionProof : EntityBase
+    public class ContributionProof : EntityBase<long>
     {
         public ContributionProofStatus Status { get; set; }
 
