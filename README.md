@@ -37,7 +37,7 @@ We have adopted main [StyleCop Rules](https://github.com/DotNetAnalyzers/StyleCo
 
 #### Error Handling
 
-For any model realted error we use default `ModelState` of `Controller`. For any custom error not related to model we use customer http status codes, for example:
+For any model realted error we use default `ModelState` of `Controller`. For any custom error/status not related to model we use customer http status codes, for example:
 
 ```
   public sealed class AppHttpErrors
@@ -50,7 +50,7 @@ For any model realted error we use default `ModelState` of `Controller`. For any
   }
 ```
 
-All custom http errors should be defined in [AppHttpErrors.cs](https://github.com/viato/viato-api/blob/master/src/Viato.Api/AppHttpErrors.cs) file.
+All custom http status codes should be defined in [AppHttpStatusCodes.cs](https://github.com/viato/viato-api/blob/master/src/Viato.Api/AppHttpErrors.cs) file.
 
 ## Acknowledgements
 viato-api is built using the following great open source projects:
