@@ -91,12 +91,12 @@ namespace Viato.Api.Controllers
             var pipeline = await _dbContext.ContributionPipelines.FindAsync(torToken.PipelineId);
             if (pipeline == null)
             {
-                return StatusCode(AppHttpErrors.TorPipelineNotFound);
+                return StatusCode(AppHttpStatusCodes.TorPipelineNotFound);
             }
 
             if (pipeline.Status != ContributionPipelineStatus.Active)
             {
-                return StatusCode(AppHttpErrors.TorPipelineIsNotAcitve);
+                return StatusCode(AppHttpStatusCodes.TorPipelineIsNotAcitve);
             }
 
             var existingContribution = await _dbContext.Contributions
@@ -106,7 +106,7 @@ namespace Viato.Api.Controllers
 
             if (existingContribution != null)
             {
-                return StatusCode(AppHttpErrors.TorTokenIdAlreadyCreated, new ScanTorResultModel()
+                return StatusCode(AppHttpStatusCodes.TorTokenIdAlreadyCreated, new ScanTorResultModel()
                 {
                     Contribution = _mapper.Map<ContributionModel>(existingContribution),
                 });

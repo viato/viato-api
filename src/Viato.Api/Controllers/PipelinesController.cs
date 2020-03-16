@@ -276,7 +276,7 @@ namespace Viato.Api.Controllers
 
             if (pipline.SourceOrganizaton.Status != OrganizationStatus.Verified)
             {
-                return StatusCode(AppHttpErrors.TorOrganizationNotVerified);
+                return StatusCode(AppHttpStatusCodes.TorOrganizationNotVerified);
             }
 
             var torList = new List<TorModel>();

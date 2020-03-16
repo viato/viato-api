@@ -1,6 +1,6 @@
 ﻿namespace Viato.Api
 {
-    public sealed class AppHttpErrors
+    public sealed class AppHttpStatusCodes
     {
         public const int TorTokenIdAlreadyCreated = 211;
 

@@ -139,7 +139,7 @@ namespace Viato.Api.Controllers
 
             if (user.TwoFactorEnabled)
             {
-                return StatusCode(AppHttpErrors.User2FAAlreadyEnabled);
+                return StatusCode(AppHttpStatusCodes.User2FAAlreadyEnabled);
             }
 
             var code = await _userManager.GetAuthenticatorKeyAsync(user);
