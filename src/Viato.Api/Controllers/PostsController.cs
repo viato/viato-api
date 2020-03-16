@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Viato.Api.Auth;
 using Viato.Api.Entities;
 using Viato.Api.Misc;
@@ -39,7 +40,10 @@ namespace Viato.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync([FromRoute]long id)
         {
-            var post = await _dbContext.Posts.FindAsync(id);
+            var post = await _dbContext.Posts
+                .Include(x => x.AuthorOrganization)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
             if (post == null)
             {
                 return NotFound();
@@ -63,7 +67,11 @@ namespace Viato.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var pipeline = await _dbContext.ContributionPipelines.FindAsync(model.ContributionPipelineId.Value);
+            var pipeline = await _dbContext.ContributionPipelines
+                .Include(x => x.SourceOrganizaton)
+                .Include(x => x.DestinationOrganization)
+                .SingleOrDefaultAsync(x => x.Id == model.ContributionPipelineId.Value);
+
             if (pipeline == null)
             {
                 return NotFound();
@@ -101,7 +109,8 @@ namespace Viato.Api.Controllers
             }
 
             var user = await _userManager.GetUserAsync(User);
-            if (!user.Organizations.Any(o => o.Id == post.AuthorOrganizationId))
+            var userOrgs = await _dbContext.Organizations.Where(x => x.AppUserId == user.Id).ToListAsync();
+            if (!userOrgs.Any(o => o.Id == post.AuthorOrganizationId))
             {
                 return StatusCode(401);
             }
@@ -132,7 +141,8 @@ namespace Viato.Api.Controllers
             }
 
             var user = await _userManager.GetUserAsync(User);
-            if (!user.Organizations.Any(o => o.Id == post.AuthorOrganizationId))
+            var userOrgs = await _dbContext.Organizations.Where(x => x.AppUserId == user.Id).ToListAsync();
+            if (!userOrgs.Any(o => o.Id == post.AuthorOrganizationId))
             {
                 return StatusCode(401);
             }
@@ -162,7 +172,10 @@ namespace Viato.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromRoute]long id)
         {
-            var post = await _dbContext.Posts.FindAsync(id);
+            var post = await _dbContext.Posts
+                .Include(x => x.AuthorOrganization)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
             if (post == null)
             {
                 return NotFound();

@@ -11,6 +11,10 @@ namespace Viato.Api.Models
 
         public ContributionPipelineTypes Types { get; set; } = ContributionPipelineTypes.NoLimit;
 
+        public string DisplayName { get; set; }
+
+        public string Description { get; set; }
+
         public long SourceOrganizationId { get; set; }
 
         public long DestinationOrganizationId { get; set; }

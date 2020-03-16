@@ -73,6 +73,10 @@ namespace Viato.Api
             modelBuilder.Entity<Organization>()
                 .HasIndex(x => x.Domain)
                 .IsUnique();
+
+            modelBuilder.Entity<Contribution>()
+                .HasIndex(x => x.TorTokenId)
+                .IsUnique();
         }
     }
 }

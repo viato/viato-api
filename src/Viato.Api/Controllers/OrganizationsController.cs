@@ -63,7 +63,7 @@ namespace Viato.Api.Controllers
                 .Skip(skip)
                 .Take(take);
 
-            return Ok(_mapper.Map<OrganizationModel>(contributions));
+            return Ok(_mapper.Map<List<OrganizationModel>>(contributions));
         }
 
         [HttpGet("{id}")]
@@ -154,7 +154,10 @@ namespace Viato.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync([FromRoute]long id, [FromBody]CreateOrUpdateOrganizationModel model)
         {
-            var organization = await _dbContext.Organizations.FindAsync(id);
+            var organization = await _dbContext
+                .Organizations
+                .Include(x => x.ContributionPipelines)
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (organization == null || organization.Status == OrganizationStatus.Suspended)
             {
@@ -266,7 +269,11 @@ namespace Viato.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromRoute]long id)
         {
-            var organization = await _dbContext.Organizations.FindAsync(id);
+            var organization = await _dbContext
+                .Organizations
+                .Include(x => x.ContributionPipelines)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
             if (organization == null || organization.Status == OrganizationStatus.Suspended)
             {
                 return NotFound();

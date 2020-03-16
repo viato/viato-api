@@ -14,7 +14,8 @@ namespace Viato.Api.Misc
 
             CreateMap<ContributionProof, ContributionProofModel>();
             CreateMap<Contribution, ContributionModel>()
-                .ForMember(m => m.ContributorId, opt => opt.MapFrom(src => src.IsPrivate ? null : src.ContributorId));
+                .ForMember(m => m.ContributorId, opt => opt.MapFrom(src => src.IsPrivate ? null : src.ContributorId))
+                .ForMember(m => m.Currency, opt => opt.MapFrom(src => src.ContributionPipeline.ContributionCurrency));
         }
     }
 }

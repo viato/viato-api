@@ -36,6 +36,8 @@ namespace Viato.Api.Controllers
                 .OrderByDescending(x => x.Id)
                 .Skip(skip)
                 .Take(take)
+                .Include(c => c.ContributionProof)
+                .Include(c => c.ContributionPipeline)
                 .ToListAsync();
 
             return Ok(_mapper.Map<List<ContributionModel>>(contributions));
@@ -53,6 +55,8 @@ namespace Viato.Api.Controllers
                 .OrderByDescending(x => x.Id)
                 .Skip(skip)
                 .Take(take)
+                .Include(c => c.ContributionProof)
+                .Include(c => c.ContributionPipeline)
                 .ToListAsync();
 
             return Ok(_mapper.Map<List<ContributionModel>>(contributions));
@@ -61,7 +65,12 @@ namespace Viato.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync([FromRoute]long id)
         {
-            var contribution = await _dbContext.Contributions.FindAsync(id);
+            var contribution = await _dbContext
+                .Contributions
+                .Include(c => c.ContributionProof)
+                .Include(c => c.ContributionPipeline)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
             if (contribution == null)
             {
                 return NotFound();
@@ -70,18 +79,12 @@ namespace Viato.Api.Controllers
             return Ok(_mapper.Map<ContributionModel>(contribution));
         }
 
-        [HttpGet("scan-tor")]
-        public async Task<IActionResult> ScanAsync([FromQuery]string token)
+        [HttpPost("scan-tor")]
+        public async Task<IActionResult> ScanAsync([FromBody]ScanTorRequestModel model)
         {
-            if (string.IsNullOrWhiteSpace(token))
+            if (!TorToken.TryParse(model.TorToken, out TorToken torToken))
             {
-                ModelState.AddModelError(nameof(token), "Tor token is required.");
-                return BadRequest(ModelState);
-            }
-
-            if (!TorToken.TryParse(token, out TorToken torToken))
-            {
-                ModelState.AddModelError(nameof(token), "Tor token is in invalid format.");
+                ModelState.AddModelError(nameof(model.TorToken), "Tor token is in invalid format.");
                 return BadRequest(ModelState);
             }
 
@@ -96,12 +99,25 @@ namespace Viato.Api.Controllers
                 return StatusCode(AppHttpErrors.TorPipelineIsNotAcitve);
             }
 
+            var existingContribution = await _dbContext.Contributions
+                .Include(x => x.ContributionPipeline)
+                .Include(x => x.ContributionProof)
+                .SingleOrDefaultAsync(x => x.TorTokenId == torToken.Id.ToString());
+
+            if (existingContribution != null)
+            {
+                return StatusCode(AppHttpErrors.TorTokenIdAlreadyCreated, new ScanTorResultModel()
+                {
+                    Contribution = _mapper.Map<ContributionModel>(existingContribution),
+                });
+            }
+
             var contribution = new Contribution()
             {
                 Amount = torToken.Amount,
                 ContributionPipelineId = pipeline.Id,
                 TorTokenId = torToken.Id.ToString(),
-                TorToken = token,
+                TorToken = model.TorToken,
             };
 
             StagedContribution stagedContribution = null;
@@ -119,7 +135,15 @@ namespace Viato.Api.Controllers
                 _dbContext.StagedContributions.Add(stagedContribution);
             }
 
+            _dbContext.Contributions.Add(contribution);
+
             await _dbContext.SaveChangesAsync();
+
+            // Reload contribution with joins
+            contribution = await _dbContext.Contributions
+                .Include(x => x.ContributionPipeline)
+                .Include(x => x.ContributionProof)
+                .SingleOrDefaultAsync(x => x.TorTokenId == torToken.Id.ToString());
 
             return Ok(new ScanTorResultModel()
             {

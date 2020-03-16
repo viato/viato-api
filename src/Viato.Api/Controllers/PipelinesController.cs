@@ -88,7 +88,11 @@ namespace Viato.Api.Controllers
             [FromQuery]int skip = 0,
             [FromQuery]int take = 10)
         {
-            var pipeline = await _dbContext.ContributionPipelines.FindAsync(id);
+            var pipeline = await _dbContext.ContributionPipelines
+                .Include(x => x.Contributions)
+                .ThenInclude(y => y.ContributionProof)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
             if (pipeline == null)
             {
                 return NotFound();
@@ -111,7 +115,11 @@ namespace Viato.Api.Controllers
         {
             take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
 
-            var pipeline = await _dbContext.ContributionPipelines.FindAsync(id);
+            var pipeline = await _dbContext.ContributionPipelines
+                .Include(x => x.Posts)
+                .ThenInclude(y => y.AuthorOrganization)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
             if (pipeline == null)
             {
                 return NotFound();
@@ -165,7 +173,10 @@ namespace Viato.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync([FromRoute]long id, [FromBody]UpdatePipelineModel model)
         {
-            var pipeline = await _dbContext.ContributionPipelines.FindAsync(id);
+            var pipeline = await _dbContext.ContributionPipelines
+                .Include(x => x.SourceOrganizaton)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
             if (pipeline == null)
             {
                 return NotFound();
@@ -203,7 +214,11 @@ namespace Viato.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromRoute]long id)
         {
-            var pipeline = await _dbContext.ContributionPipelines.FindAsync(id);
+            var pipeline = await _dbContext.ContributionPipelines
+                .Include(x => x.SourceOrganizaton)
+                .Include(x => x.Contributions)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
             if (pipeline == null || pipeline.Status == ContributionPipelineStatus.Suspended)
             {
                 return NotFound();
@@ -245,7 +260,10 @@ namespace Viato.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var pipline = await _dbContext.ContributionPipelines.FindAsync(id);
+            var pipline = await _dbContext.ContributionPipelines
+                .Include(x => x.SourceOrganizaton)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
             if (pipline == null)
             {
                 return NotFound();
