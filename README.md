@@ -31,6 +31,10 @@ We have adopted main [StyleCop Rules](https://github.com/DotNetAnalyzers/StyleCo
 
 ## API Conventions
 
+#### Entity Framework
+
+- We don't use Eager or Lazy loading, you have to explicitly set includes for each query.
+
 #### Error Handling
 
 For any model realted error we use default `ModelState` of `Controller`. For any custom error not related to model we use customer http status codes, for example:
