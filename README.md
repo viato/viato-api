@@ -40,17 +40,18 @@ We have adopted main [StyleCop Rules](https://github.com/DotNetAnalyzers/StyleCo
 For any model realted error we use default `ModelState` of `Controller`. For any custom error/status not related to model we use customer http status codes, for example:
 
 ```
-  public sealed class AppHttpErrors
+  public sealed class AppHttpStatusCodes
   {
+      public const int TorTokenIdAlreadyCreated = 211;
+      ...
       public const int TorPipelineNotFound = 441;
       public const int TorPipelineIsNotAcitve = 442;
-      public const int TorOrganizationNotVerified = 443;
       ...
       public const int User2FAAlreadyEnabled = 451;
   }
 ```
 
-All custom http status codes should be defined in [AppHttpStatusCodes.cs](https://github.com/viato/viato-api/blob/master/src/Viato.Api/AppHttpErrors.cs) file.
+All custom http status codes should be defined in [AppHttpStatusCodes.cs](https://github.com/viato/viato-api/blob/master/src/Viato.Api/AppHttpStatusCodes.cs) file.
 
 ## Acknowledgements
 viato-api is built using the following great open source projects:
