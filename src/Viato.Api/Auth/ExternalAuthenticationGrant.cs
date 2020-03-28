@@ -16,7 +16,6 @@ namespace Viato.Api.Auth
         private readonly FacebookAuthProvider _facebookAuthProvider;
         private readonly GoogleAuthProvider _googleAuthProvider;
         private readonly TwitterAuthProvider _twitterAuthProvider;
-        private readonly IStagedContributionService _stagedContributionService;
 
         private readonly Dictionary<ExternalProviderType, IExternalAuthProvider> _providers;
 
@@ -24,14 +23,12 @@ namespace Viato.Api.Auth
             UserManager<AppUser> userManager,
             FacebookAuthProvider facebookAuthProvider,
             GoogleAuthProvider googleAuthProvider,
-            TwitterAuthProvider twitterAuthProvider,
-            IStagedContributionService stagedContributionService)
+            TwitterAuthProvider twitterAuthProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _facebookAuthProvider = facebookAuthProvider ?? throw new ArgumentNullException(nameof(facebookAuthProvider));
             _googleAuthProvider = googleAuthProvider ?? throw new ArgumentNullException(nameof(googleAuthProvider));
             _twitterAuthProvider = twitterAuthProvider ?? throw new ArgumentNullException(nameof(twitterAuthProvider));
-            _stagedContributionService = stagedContributionService ?? throw new ArgumentNullException(nameof(stagedContributionService));
 
             _providers = new Dictionary<ExternalProviderType, IExternalAuthProvider>
             {
@@ -120,11 +117,6 @@ namespace Viato.Api.Auth
                 {
                     await _userManager.AddLoginAsync(newUser, new UserLoginInfo(provider, userExternalId, provider));
                     var userClaims = await _userManager.GetClaimsAsync(newUser);
-
-                    if (Guid.TryParse(context.Request.Raw.Get("staged_contribution_id"), out Guid stagedContributionId))
-                    {
-                        await _stagedContributionService.AttachStagedContributionAsync(stagedContributionId, newUser);
-                    }
 
                     return new GrantValidationResult(newUser.Id.ToString(), provider, userClaims, provider, null);
                 }

@@ -83,7 +83,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpPost("scan-tor")]
-        [Produces(typeof(ScanTorResultModel))]
+        [Produces(typeof(ContributionModel))]
         public async Task<IActionResult> ScanAsync([FromBody]ScanTorRequestModel model)
         {
             if (!TorToken.TryParse(model.TorToken, out TorToken torToken))
@@ -110,10 +110,7 @@ namespace Viato.Api.Controllers
 
             if (existingContribution != null)
             {
-                return StatusCode(AppHttpStatusCodes.TorTokenIdAlreadyCreated, new ScanTorResultModel()
-                {
-                    Contribution = _mapper.Map<ContributionModel>(existingContribution),
-                });
+                return StatusCode(AppHttpStatusCodes.TorTokenIdAlreadyCreated, _mapper.Map<ContributionModel>(existingContribution));
             }
 
             var contribution = new Contribution()
@@ -124,19 +121,9 @@ namespace Viato.Api.Controllers
                 TorToken = model.TorToken,
             };
 
-            StagedContribution stagedContribution = null;
-
             if (User.TryGetUserId(out long userId))
             {
                 contribution.ContributorId = userId;
-            }
-            else
-            {
-                stagedContribution = new StagedContribution()
-                {
-                    ContributionId = contribution.Id,
-                };
-                _dbContext.StagedContributions.Add(stagedContribution);
             }
 
             _dbContext.Contributions.Add(contribution);
@@ -149,11 +136,7 @@ namespace Viato.Api.Controllers
                 .Include(x => x.ContributionProof)
                 .SingleOrDefaultAsync(x => x.TorTokenId == torToken.Id.ToString());
 
-            return Ok(new ScanTorResultModel()
-            {
-                Contribution = _mapper.Map<ContributionModel>(contribution),
-                StagedContributionId = stagedContribution?.Id.ToString(),
-            });
+            return Ok(_mapper.Map<ContributionModel>(contribution));
         }
     }
 }

@@ -24,8 +24,6 @@ namespace Viato.Api
 
         public DbSet<Organization> Organizations { get; set; }
 
-        public DbSet<StagedContribution> StagedContributions { get; set; }
-
         public override int SaveChanges()
         {
             AddTimestamps();
