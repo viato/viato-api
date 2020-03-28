@@ -28,6 +28,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet]
+        [Produces(typeof(List<ContributionModel>))]
         public async Task<IActionResult> GetAllAsync([FromQuery]int skip = 0, [FromQuery]int take = 10)
         {
             take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
@@ -45,6 +46,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpGet("my")]
+        [Produces(typeof(List<ContributionModel>))]
         public async Task<IActionResult> GetMyAsync([FromQuery]int skip = 0, [FromQuery]int take = 10)
         {
             take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
@@ -63,6 +65,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Produces(typeof(ContributionModel))]
         public async Task<IActionResult> GetAsync([FromRoute]long id)
         {
             var contribution = await _dbContext
@@ -80,6 +83,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpPost("scan-tor")]
+        [Produces(typeof(ScanTorResultModel))]
         public async Task<IActionResult> ScanAsync([FromBody]ScanTorRequestModel model)
         {
             if (!TorToken.TryParse(model.TorToken, out TorToken torToken))

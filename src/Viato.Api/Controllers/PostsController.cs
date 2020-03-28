@@ -38,6 +38,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Produces(typeof(PostModel))]
         public async Task<IActionResult> GetAsync([FromRoute]long id)
         {
             var post = await _dbContext.Posts
@@ -59,6 +60,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpPost]
+        [Produces(typeof(Post))]
         public async Task<IActionResult> CreateAsync([FromBody]CreateOrUpdatePostModel model)
         {
             if (!model.ContributionPipelineId.HasValue)
@@ -95,11 +97,12 @@ namespace Viato.Api.Controllers
             _dbContext.Posts.Add(post);
             await _dbContext.SaveChangesAsync();
 
-            return Ok(post);
+            return Ok(_mapper.Map<PostModel>(post));
         }
 
         [Authorize]
         [HttpPut("{id}")]
+        [Produces(typeof(Post))]
         public async Task<IActionResult> UpdateAsync([FromRoute]long id, [FromBody]CreateOrUpdatePostModel model)
         {
             var post = await _dbContext.Posts.FindAsync(id);
@@ -121,11 +124,14 @@ namespace Viato.Api.Controllers
 
             await _dbContext.SaveChangesAsync();
 
+            _mapper.Map<PostModel>(post);
+
             return Ok(post);
         }
 
         [Authorize]
         [HttpPut("{id}/update-image")]
+        [Produces(typeof(PostModel))]
         public async Task<IActionResult> UpdateLogoAsync([FromRoute]long id, [FromForm]IFormFile file)
         {
             if (file == null)
@@ -170,6 +176,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpDelete("{id}")]
+        [Produces(typeof(PostModel))]
         public async Task<IActionResult> DeleteAsync([FromRoute]long id)
         {
             var post = await _dbContext.Posts
@@ -188,7 +195,7 @@ namespace Viato.Api.Controllers
 
             _dbContext.Posts.Remove(post);
 
-            return Ok(post);
+            return Ok(_mapper.Map<PostModel>(post));
         }
     }
 }

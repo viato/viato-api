@@ -28,6 +28,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet]
+        [Produces(typeof(List<PipelineModel>))]
         public async Task<IActionResult> GetAllAsync(
             [FromQuery]int skip = 0,
             [FromQuery]int take = 10,
@@ -56,6 +57,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpGet("my")]
+        [Produces(typeof(List<PipelineModel>))]
         public IActionResult GetMy([FromQuery]int skip = 0, [FromQuery]int take = 10)
         {
             take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
@@ -71,6 +73,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Produces(typeof(PipelineModel))]
         public async Task<IActionResult> GetAsync([FromRoute]long id)
         {
             var pipeline = await _dbContext.ContributionPipelines.FindAsync(id);
@@ -83,6 +86,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet("{id}/contributions")]
+        [Produces(typeof(List<ContributionModel>))]
         public async Task<IActionResult> GetContributionsAsync(
             [FromRoute]long id,
             [FromQuery]int skip = 0,
@@ -108,6 +112,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet("{id}/posts")]
+        [Produces(typeof(List<PostModel>))]
         public async Task<IActionResult> GetAllAsync(
             [FromRoute]long id,
             [FromQuery]int skip = 0,
@@ -139,6 +144,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpPost]
+        [Produces(typeof(PipelineModel))]
         public async Task<IActionResult> CreateAsync([FromBody]CreatePipelineModel model)
         {
             if (!await ValidateCreateModelAsync(model))
@@ -171,6 +177,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpPut("{id}")]
+        [Produces(typeof(PipelineModel))]
         public async Task<IActionResult> UpdateAsync([FromRoute]long id, [FromBody]UpdatePipelineModel model)
         {
             var pipeline = await _dbContext.ContributionPipelines
@@ -212,6 +219,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpDelete("{id}")]
+        [Produces(typeof(PipelineModel))]
         public async Task<IActionResult> DeleteAsync([FromRoute]long id)
         {
             var pipeline = await _dbContext.ContributionPipelines

@@ -38,6 +38,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet]
+        [Produces(typeof(List<OrganizationModel>))]
         public async Task<IActionResult> GetAllAsync([FromQuery]int skip = 0, [FromQuery]int take = 10)
         {
             take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
@@ -52,6 +53,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpGet("my")]
+        [Produces(typeof(List<OrganizationModel>))]
         public IActionResult GetMy([FromQuery]int skip = 0, [FromQuery]int take = 10)
         {
             take = take > Constants.MaxPageSize ? Constants.MaxPageSize : take;
@@ -67,6 +69,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Produces(typeof(OrganizationModel))]
         public async Task<IActionResult> GetAsync([FromRoute]long id)
         {
             var organization = await _dbContext.Organizations.FindAsync(id);
@@ -80,6 +83,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpGet("{id}/pipelines")]
+        [Produces(typeof(List<PipelineModel>))]
         public async Task<IActionResult> GetPipelinesAsync(
             [FromRoute]long id,
             [FromQuery]int skip = 0,
@@ -117,6 +121,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpPost]
+        [Produces(typeof(OrganizationModel))]
         public async Task<IActionResult> CreateAsync([FromBody]CreateOrUpdateOrganizationModel model)
         {
             if (!model.OrganizationType.HasValue)
@@ -152,6 +157,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpPut("{id}")]
+        [Produces(typeof(OrganizationModel))]
         public async Task<IActionResult> UpdateAsync([FromRoute]long id, [FromBody]CreateOrUpdateOrganizationModel model)
         {
             var organization = await _dbContext
@@ -198,6 +204,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpPut("{id}/verify-dns")]
+        [Produces(typeof(OrganizationModel))]
         public async Task<IActionResult> VerifyDnsAsync([FromRoute]long id)
         {
             var organization = await _dbContext.Organizations.FindAsync(id);
@@ -225,6 +232,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpPut("{id}/update-logo")]
+        [Produces(typeof(OrganizationModel))]
         public async Task<IActionResult> UpdateLogoAsync([FromRoute]long id, [FromForm]IFormFile file)
         {
             if (file == null)
@@ -267,6 +275,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpDelete("{id}")]
+        [Produces(typeof(OrganizationModel))]
         public async Task<IActionResult> DeleteAsync([FromRoute]long id)
         {
             var organization = await _dbContext

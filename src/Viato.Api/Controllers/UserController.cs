@@ -30,6 +30,7 @@ namespace Viato.Api.Controllers
         }
 
         [HttpPost("register")]
+        [Produces(typeof(RegisterResponseModel))]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterUserModel model)
         {
             var user = new AppUser()
@@ -133,6 +134,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpGet("two-factor")]
+        [Produces(typeof(TwoFactorResponseModel))]
         public async Task<IActionResult> GetTwoFactor()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -159,6 +161,7 @@ namespace Viato.Api.Controllers
 
         [Authorize]
         [HttpPost("two-factor")]
+        [Produces(typeof(RecoveryCodeResponseModel))]
         public async Task<IActionResult> SetTwoFactor([FromBody] SetTwoFactorModel model)
         {
             var user = await _userManager.GetUserAsync(User);
